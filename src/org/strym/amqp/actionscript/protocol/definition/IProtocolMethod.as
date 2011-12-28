@@ -6,8 +6,16 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.protocol.definition {
+import flash.utils.ByteArray;
+
 public interface IProtocolMethod {
     function get id():int;
     function get name():String;
+    function get qualifiedName():String;
+
+    function getField(name:String):*;
+
+    function read(data:ByteArray):void;
+    function write(data:ByteArray):void;
 }
 }

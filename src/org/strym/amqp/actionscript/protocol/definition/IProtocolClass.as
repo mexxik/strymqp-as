@@ -8,6 +8,7 @@
 package org.strym.amqp.actionscript.protocol.definition {
 public interface IProtocolClass {
     function get id():int;
+    function get name():String;
 
     function getMethod(id:int):IProtocolMethod;
 }

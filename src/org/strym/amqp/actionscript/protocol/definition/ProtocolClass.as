@@ -10,6 +10,7 @@ import org.as3commons.collections.Map;
 
 public class ProtocolClass implements IProtocolClass {
     protected var _id:int = 0;
+    protected var _name:String = "";
 
     private var _methods:Map = new Map();
     
@@ -25,6 +26,17 @@ public class ProtocolClass implements IProtocolClass {
 
     public function set id(value:int):void {
         _id = value;
+    }
+
+    /**
+     * name
+     */
+    public function get name():String {
+        return _name;
+    }
+    
+    public function set name(value:String):void {
+        _name = value;
     }
 
     /**

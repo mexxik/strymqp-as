@@ -9,6 +9,7 @@ package org.strym.amqp.actionscript.protocol.definition {
 import org.as3commons.collections.Map;
 
 public class ProtocolDefinition implements IProtocolDefinition {
+    protected var _domains:Map = new Map();
     protected var _classes:Map = new Map();
 
     public function ProtocolDefinition() {

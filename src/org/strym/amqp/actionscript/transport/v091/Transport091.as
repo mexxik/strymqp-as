@@ -93,6 +93,11 @@ public class Transport091 extends Transport {
                     var classId:int = _currentFrame.payload.readShort();
                     var methodId:int = _currentFrame.payload.readShort();
                     var protocolMethod:IProtocolMethod = _connectionParameters.protocol.getMethod(classId, methodId);
+
+                    protocolMethod.read(_currentFrame.payload);
+
+                    processMethod(protocolMethod);
+
                     break;
             }
 
@@ -101,8 +106,15 @@ public class Transport091 extends Transport {
         }
     }
 
-    private function processMethodFrame(frame:Frame091):void {
+    private function processMethod(method:IProtocolMethod):void {
+        switch (method.qualifiedName) {
+            case "connection.start":
+                var versionMajor:int = method.getField("version-major");
+                var versionMinor:int = method.getField("version-minor");
 
+
+                break;
+        }
     }
 }
 }
