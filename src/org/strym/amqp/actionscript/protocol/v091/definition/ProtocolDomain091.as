@@ -8,9 +8,13 @@
 package org.strym.amqp.actionscript.protocol.v091.definition {
 import flash.utils.ByteArray;
 
+import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
+
 import org.strym.amqp.actionscript.protocol.definition.ProtocolDomain;
 
 public class ProtocolDomain091 extends ProtocolDomain {
+    private var _readWriter:IDomainReaderWriter = new DomainReadWriter091();
+
     public function ProtocolDomain091() {
     }
 
@@ -20,7 +24,11 @@ public class ProtocolDomain091 extends ProtocolDomain {
 
         switch (_type) {
             case "octet":
-                result = data.readUnsignedByte();
+                result = _readWriter.readOctet(data);
+                break;
+
+            case "table":
+                result = _readWriter.readTable(data);
                 break;
         }
 

@@ -16,9 +16,11 @@ import org.strym.amqp.actionscript.transport.ITransport;
 import org.strym.amqp.actionscript.transport.Transport;
 
 public class Connection implements IConnection {
-    private var _connectionParameters:ConnectionParameters;
+    protected var _connectionParameters:ConnectionParameters;
 
     protected var _transport:ITransport;
+
+    protected var _started:Boolean = false;
 
     public function Connection(connectionParameters:ConnectionParameters) {
         _connectionParameters = connectionParameters;
@@ -48,5 +50,8 @@ public class Connection implements IConnection {
     }
 
 
+    public function get isStarted():Boolean {
+        return _started;
+    }
 }
 }

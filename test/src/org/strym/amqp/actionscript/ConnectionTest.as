@@ -9,6 +9,8 @@ package org.strym.amqp.actionscript {
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import org.flexunit.asserts.assertTrue;
+
 import org.flexunit.async.Async;
 import org.strym.amqp.actionscript.connection.ConnectionFactory;
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
@@ -61,8 +63,8 @@ public class ConnectionTest {
      * tests
      */
     [Test(async)]
-    public function testSimpleConnection():void {
-
+    public function testConnectionStarted():void {
+        assertTrue(_connection.isStarted, "connected was not started");
     }
 }
 }

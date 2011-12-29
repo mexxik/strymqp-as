@@ -12,5 +12,7 @@ public interface IConnection {
 
     function open():void;
     function get isOpened():Boolean;
+
+    function get isStarted():Boolean;
 }
 }
