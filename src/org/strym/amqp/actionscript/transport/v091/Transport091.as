@@ -11,10 +11,12 @@ import flash.events.ProgressEvent;
 import org.as3commons.collections.Map;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
+import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.transport.Transport;
+import org.strym.amqp.actionscript.utils.DataUtils;
 
 public class Transport091 extends Transport {
 
@@ -109,9 +111,19 @@ public class Transport091 extends Transport {
     private function processMethod(method:IProtocolMethod):void {
         switch (method.qualifiedName) {
             case "connection.start":
-                var versionMajor:int = method.getField("version-major");
+            /*  var versionMajor:int = method.getField("version-major");
                 var versionMinor:int = method.getField("version-minor");
+                var mechanisms:String = DataUtils.byteArrayToString(method.getField("mechanisms"));
+            */
 
+                // received Connection.Start
+                var connectionEvent:ConnectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_START);
+                connectionEvent.arguments = method.fields;
+
+                dispatchEvent(connectionEvent);
+
+                // sending back Connection.Start-Ok
+                var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
 
                 break;
         }

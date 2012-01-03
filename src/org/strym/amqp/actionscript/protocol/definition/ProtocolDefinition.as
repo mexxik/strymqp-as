@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.protocol.definition {
 import org.as3commons.collections.Map;
+import org.as3commons.collections.framework.IIterator;
 
 public class ProtocolDefinition implements IProtocolDefinition {
     protected var _domains:Map = new Map();
@@ -22,6 +23,17 @@ public class ProtocolDefinition implements IProtocolDefinition {
         if (protocolClass)
             return protocolClass.getMethod(methodId);
 
+        return null;
+    }
+
+    public function findMethod(methodName:String):IProtocolMethod {
+        var iterator:IIterator = _classes.iterator();
+        while (iterator.hasNext()) {
+            var methodClass:IProtocolClass = iterator.next() as IProtocolClass;
+            var protocolMethod:IProtocolMethod = methodClass.findMethod(methodName);
+            if (protocolMethod)
+                return protocolMethod;
+        }
         return null;
     }
 }

@@ -6,7 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.protocol.definition {
+import flexunit.utils.Iterator;
+
 import org.as3commons.collections.Map;
+import org.as3commons.collections.framework.IIterator;
 
 public class ProtocolClass implements IProtocolClass {
     protected var _id:int = 0;
@@ -44,6 +47,16 @@ public class ProtocolClass implements IProtocolClass {
      */
     public function getMethod(id:int):IProtocolMethod {
         return _methods.itemFor(id) as IProtocolMethod;
+    }
+
+    public function findMethod(methodName:String):IProtocolMethod {
+        var iterator:IIterator = _methods.iterator();
+        while (iterator.hasNext()) {
+            var protocolMethod:IProtocolMethod = iterator.next() as IProtocolMethod;
+            if (protocolMethod.name == methodName)
+                return protocolMethod;
+        }
+        return null;
     }
 
     public function get methods():Map {

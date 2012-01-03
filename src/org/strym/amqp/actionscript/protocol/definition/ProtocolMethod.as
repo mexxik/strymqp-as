@@ -15,7 +15,7 @@ import org.as3commons.collections.framework.IIterator;
 public class ProtocolMethod implements IProtocolMethod {
     protected var _id:int = 0;
     protected var _name:String;
-    protected var _fields:SortedMap = new SortedMap();
+    private var _fields:SortedMap = new SortedMap();
 
     private var _protocolClass:IProtocolClass;
 
@@ -24,6 +24,11 @@ public class ProtocolMethod implements IProtocolMethod {
 
     public function addField(field:IMethodField):void {
         _fields.add(field.name, field);
+    }
+
+
+    public function get fields():SortedMap {
+        return _fields;
     }
 
     public function getField(name:String):* {

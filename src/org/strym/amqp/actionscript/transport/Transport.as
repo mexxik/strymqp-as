@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.transport {
 import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
@@ -17,7 +18,7 @@ import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.Protocol;
 import org.strym.amqp.actionscript.transport.v091.Transport091;
 
-public class Transport implements ITransport {
+public class Transport extends EventDispatcher implements ITransport {
     protected var _connectionParameters:ConnectionParameters;
 
     protected var _delegate:IODelegate;

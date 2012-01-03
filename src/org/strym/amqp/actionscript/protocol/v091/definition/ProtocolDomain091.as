@@ -30,6 +30,10 @@ public class ProtocolDomain091 extends ProtocolDomain {
             case "table":
                 result = _readWriter.readTable(data);
                 break;
+
+            case "longstr":
+                result = _readWriter.readLongString(data);
+                break;
         }
 
         return result;

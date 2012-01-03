@@ -11,5 +11,6 @@ public interface IProtocolClass {
     function get name():String;
 
     function getMethod(id:int):IProtocolMethod;
+    function findMethod(methodName:String):IProtocolMethod;
 }
 }

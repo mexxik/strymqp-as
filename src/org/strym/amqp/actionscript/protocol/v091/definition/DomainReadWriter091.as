@@ -107,6 +107,7 @@ public class DomainReadWriter091 extends DomainReadWriter {
                         break;
                     
                     case 116: // boolean?
+                        // TODO implement proper amqp bits handling
                         value = data.readUnsignedByte();
                         break;
                 }

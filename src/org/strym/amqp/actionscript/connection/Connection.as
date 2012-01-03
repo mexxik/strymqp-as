@@ -10,6 +10,8 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
+import org.strym.amqp.actionscript.events.ConnectionEvent;
+
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
 import org.strym.amqp.actionscript.transport.ITransport;
@@ -38,6 +40,8 @@ public class Connection implements IConnection {
         if (_connectionParameters && !isOpened) {
             _transport = Transport.getTransport(_connectionParameters.protocol);
 
+            _transport.addEventListener(ConnectionEvent.CONNECTION_START, transport_connectionStartHandler);
+
             _transport.open(_connectionParameters);
         }
         else {
@@ -52,6 +56,13 @@ public class Connection implements IConnection {
 
     public function get isStarted():Boolean {
         return _started;
+    }
+
+    /**
+     * transport event handlers
+     */
+    protected function transport_connectionStartHandler(event:ConnectionEvent):void {
+        _started = true;
     }
 }
 }

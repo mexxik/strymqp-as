@@ -51,5 +51,9 @@ public class Protocol implements IProtocol {
     public function getMethod(classId:int, methodId:int):IProtocolMethod {
         return _definition.getMethod(classId, methodId);
     }
+
+    public function findMethod(methodName:String):IProtocolMethod {
+        return _definition.findMethod(methodName);
+    }
 }
 }
