@@ -26,6 +26,14 @@ public class ProtocolDomain091 extends ProtocolDomain {
             case "octet":
                 result = _readWriter.readOctet(data);
                 break;
+            
+            case "short":
+                result = data.readShort();
+                break;
+            
+            case "long":
+                result = data.readInt();
+                break;
 
             case "table":
                 result = _readWriter.readTable(data);
@@ -41,10 +49,18 @@ public class ProtocolDomain091 extends ProtocolDomain {
 
     override public function write(data:ByteArray, value:*):void {
         //super.write(value);
-        if (value) {
+        if (value != null) {
             switch (_type) {
                 case "octet":
                     _readWriter.writeOctet(data, value);
+                    break;
+                
+                case "short":
+                    data.writeShort(value);
+                    break;
+                
+                case "long":
+                    data.writeInt(value);
                     break;
 
                 case "table":

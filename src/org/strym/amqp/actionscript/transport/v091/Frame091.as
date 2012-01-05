@@ -10,6 +10,7 @@ import flash.utils.ByteArray;
 
 import org.strym.amqp.actionscript.io.ByteReadWritable;
 
+// TODO: make Frames more generic via interfaces and parent classes
 public class Frame091 implements ByteReadWritable {
     private var _isComplete:Boolean = false;
     private var _isHeaderComplete:Boolean = false;

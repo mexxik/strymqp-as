@@ -24,6 +24,8 @@ public class Transport091 extends Transport {
 
     private var _currentFrame:Frame091;
 
+    private var _tuneProperties:TuneProperties = new TuneProperties();
+
     private var _channels:Map = new Map();
 
     override public function open(connectionParameters:ConnectionParameters):void {
@@ -69,12 +71,12 @@ public class Transport091 extends Transport {
                 }
 
                 if (_currentFrame.payloadSize > 0 &&
-                    _currentFrame.payload.length < _currentFrame.payloadSize) {
+                        _currentFrame.payload.length < _currentFrame.payloadSize) {
 
                     _delegate.readBytes(
-                        _currentFrame.payload,
-                        _currentFrame.payload.length,
-                        Math.min(_delegate.bytesAvailable, _currentFrame.payloadSize - _currentFrame.payload.length)
+                            _currentFrame.payload,
+                            _currentFrame.payload.length,
+                            Math.min(_delegate.bytesAvailable, _currentFrame.payloadSize - _currentFrame.payload.length)
                     );
 
                     if (_currentFrame.payload.length < _currentFrame.payloadSize)
@@ -89,7 +91,7 @@ public class Transport091 extends Transport {
                 _currentFrame.isComplete = true;
             }
         }
-        
+
         if (_currentFrame.isComplete) {
             switch (_currentFrame.type) {
                 // TODO retrieve these constants from the protocol definition
@@ -113,11 +115,6 @@ public class Transport091 extends Transport {
     private function processMethod(method:IProtocolMethod):void {
         switch (method.qualifiedName) {
             case "connection.start":
-            /*  var versionMajor:int = method.getField("version-major");
-                var versionMinor:int = method.getField("version-minor");
-                var mechanisms:String = DataUtils.byteArrayToString(method.getField("mechanisms"));
-            */
-
                 // received Connection.Start
                 var connectionEvent:ConnectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_START);
                 connectionEvent.arguments = method.fields;
@@ -150,17 +147,50 @@ public class Transport091 extends Transport {
                 startOkMethod.setField("response", responseByteArray);
                 startOkMethod.setField("locale", "en_US");
 
-                startOkMethod.write(startOkFrame.payload);
 
-                var startOkFrameByteArray:ByteArray = new ByteArray();
-                startOkFrame.write(startOkFrameByteArray);
+                writeMethodAndFlush(startOkFrame, startOkMethod);
+                /*startOkMethod.write(startOkFrame.payload);
 
-                _delegate.writeBytes(startOkFrameByteArray);
-                _delegate.flush();
+                 var startOkFrameByteArray:ByteArray = new ByteArray();
+                 startOkFrame.write(startOkFrameByteArray);
+
+                 _delegate.writeBytes(startOkFrameByteArray);
+                 _delegate.flush();*/
 
 
                 break;
+
+            case "connection.tune":
+                _tuneProperties.channelMax = method.getField("channel-max") as int;
+                _tuneProperties.frameMax = method.getField("frame-max") as uint;
+                _tuneProperties.heartbeat = method.getField("heartbeat") as int;
+
+
+                // sending back Connection.Tune-Ok
+                var tuneOkFrame:Frame091 = new Frame091();
+                tuneOkFrame.type = 1;
+                tuneOkFrame.channel = 0;
+
+                var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("tune-ok");
+
+                tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
+                tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
+                tuneOkMethod.setField("heartbeat", _tuneProperties.heartbeat);
+
+                writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
+
+                break;
         }
+    }
+
+    private function writeMethodAndFlush(frame:Frame091, method:IProtocolMethod):void {
+        method.write(frame.payload);
+
+        var byteArray:ByteArray = new ByteArray();
+        frame.write(byteArray);
+
+        _delegate.writeBytes(byteArray);
+        _delegate.flush();
     }
 }
 }
