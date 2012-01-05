@@ -140,7 +140,14 @@ public class Transport091 extends Transport {
 
                 startOkMethod.setField("client-properties", clientProperties);
                 startOkMethod.setField("mechanism", "PLAIN");
-                startOkMethod.setField("response", "guest/guest");
+
+                var responseByteArray:ByteArray = new ByteArray();
+                responseByteArray.writeByte(0);
+                responseByteArray.writeUTFBytes("guest");
+                responseByteArray.writeByte(0);
+                responseByteArray.writeUTFBytes("guest");
+
+                startOkMethod.setField("response", responseByteArray);
                 startOkMethod.setField("locale", "en_US");
 
                 startOkMethod.write(startOkFrame.payload);

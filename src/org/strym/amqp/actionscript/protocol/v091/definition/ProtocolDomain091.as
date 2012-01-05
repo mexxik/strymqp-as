@@ -52,18 +52,25 @@ public class ProtocolDomain091 extends ProtocolDomain {
                     _readWriter.writeTable(table, value);
 
                     //trace(table.toString());
-                        
+
                     //data.writeUnsignedInt(table.length);
                     data.writeBytes(table);
                     break;
-                
+
                 case "shortstr":
                     _readWriter.writeShortString(data, value);
                     break;
 
                 case "longstr":
-                    var byteArray:ByteArray = new ByteArray();
-                    byteArray.writeUTFBytes(value);
+                    var byteArray:ByteArray;
+                    if (value is String) {
+                        byteArray = new ByteArray();
+                        byteArray.writeUTFBytes(value);
+                    }
+                    else if (value is ByteArray) {
+                        byteArray = value;
+                    }
+
 
                     _readWriter.writeLongString(data, byteArray);
                     break;
