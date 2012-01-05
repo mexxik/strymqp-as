@@ -17,7 +17,7 @@ public class ProtocolDomain implements IProtocolDomain {
 
     }
 
-    public function write(value:*):void {
+    public function write(data:ByteArray, value:*):void {
     }
 
     public function get name():String {

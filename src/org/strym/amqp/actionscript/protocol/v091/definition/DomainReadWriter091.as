@@ -9,6 +9,7 @@ package org.strym.amqp.actionscript.protocol.v091.definition {
 import flash.utils.ByteArray;
 
 import org.as3commons.collections.SortedMap;
+import org.as3commons.collections.framework.IIterator;
 
 import org.strym.amqp.actionscript.protocol.definition.DomainReadWriter;
 
@@ -122,6 +123,28 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeTable(data:ByteArray, table:SortedMap):void {
+        //data.writeByte(70);
+
+        var content:ByteArray = new ByteArray();
+
+        var iterator:IIterator = table.keyIterator();
+        while (iterator.hasNext()) {
+            var key:String = iterator.next() as String;
+            var value:* = table.itemFor(key);
+
+            writeShortString(content, key);
+
+            if (value is String) {
+                content.writeByte(83);
+
+                var byteArray:ByteArray = new ByteArray();
+                byteArray.writeUTFBytes(value);
+                writeLongString(content, byteArray);
+            }
+        }
+
+        data.writeUnsignedInt(content.length);
+        data.writeBytes(content);
     }
 }
 }

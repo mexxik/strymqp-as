@@ -15,6 +15,6 @@ public interface IProtocolDomain {
     function get type():String;
 
     function read(data:ByteArray):*;
-    function write(value:*):void;
+    function write(data:ByteArray, value:*):void;
 }
 }

@@ -8,7 +8,9 @@
 package org.strym.amqp.actionscript.transport.v091 {
 import flash.utils.ByteArray;
 
-public class Frame091 {
+import org.strym.amqp.actionscript.io.ByteReadWritable;
+
+public class Frame091 implements ByteReadWritable {
     private var _isComplete:Boolean = false;
     private var _isHeaderComplete:Boolean = false;
 
@@ -18,6 +20,17 @@ public class Frame091 {
     private var _payload:ByteArray = new ByteArray();
 
     public function Frame091() {
+    }
+
+    public function read(data:ByteArray):void {
+    }
+
+    public function write(data:ByteArray):void {
+        data.writeByte(_type);
+        data.writeShort(_channel);
+        data.writeInt(_payload.length);
+        data.writeBytes(_payload);
+        data.writeByte(206);
     }
 
     public function get isComplete():Boolean {

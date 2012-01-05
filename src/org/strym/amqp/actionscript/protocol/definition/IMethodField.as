@@ -12,5 +12,6 @@ public interface IMethodField extends ByteReadWritable {
     function get name():String;
     function get domain():IProtocolDomain;
     function get value():*;
+    function set value(value:*):void;
 }
 }

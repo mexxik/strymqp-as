@@ -7,8 +7,10 @@
  */
 package org.strym.amqp.actionscript.transport.v091 {
 import flash.events.ProgressEvent;
+import flash.utils.ByteArray;
 
 import org.as3commons.collections.Map;
+import org.as3commons.collections.SortedMap;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
@@ -123,7 +125,32 @@ public class Transport091 extends Transport {
                 dispatchEvent(connectionEvent);
 
                 // sending back Connection.Start-Ok
+                var startOkFrame:Frame091 = new Frame091();
+                startOkFrame.type = 1;
+                startOkFrame.channel = 0;
+
                 var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
+
+                var clientProperties:SortedMap = new SortedMap();
+                clientProperties.add("product", "StrymQP");
+                clientProperties.add("information", "http://www.strym.org");
+                clientProperties.add("platform", "Flash");
+                clientProperties.add("copyright", "Copyright (C) 2012 Strym");
+                clientProperties.add("version", "0.1.0");
+
+                startOkMethod.setField("client-properties", clientProperties);
+                startOkMethod.setField("mechanism", "PLAIN");
+                startOkMethod.setField("response", "guest/guest");
+                startOkMethod.setField("locale", "en_US");
+
+                startOkMethod.write(startOkFrame.payload);
+
+                var startOkFrameByteArray:ByteArray = new ByteArray();
+                startOkFrame.write(startOkFrameByteArray);
+
+                _delegate.writeBytes(startOkFrameByteArray);
+                _delegate.flush();
+
 
                 break;
         }

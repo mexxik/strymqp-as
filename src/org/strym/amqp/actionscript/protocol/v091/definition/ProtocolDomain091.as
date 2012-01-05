@@ -39,8 +39,37 @@ public class ProtocolDomain091 extends ProtocolDomain {
         return result;
     }
 
-    override public function write(value:*):void {
-        super.write(value);
+    override public function write(data:ByteArray, value:*):void {
+        //super.write(value);
+        if (value) {
+            switch (_type) {
+                case "octet":
+                    _readWriter.writeOctet(data, value);
+                    break;
+
+                case "table":
+                    var table:ByteArray = new ByteArray();
+                    _readWriter.writeTable(table, value);
+
+                    //trace(table.toString());
+                        
+                    //data.writeUnsignedInt(table.length);
+                    data.writeBytes(table);
+                    break;
+                
+                case "shortstr":
+                    _readWriter.writeShortString(data, value);
+                    break;
+
+                case "longstr":
+                    var byteArray:ByteArray = new ByteArray();
+                    byteArray.writeUTFBytes(value);
+
+                    _readWriter.writeLongString(data, byteArray);
+                    break;
+            }
+        }
+
     }
 }
 }

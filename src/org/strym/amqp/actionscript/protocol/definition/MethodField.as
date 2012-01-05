@@ -21,6 +21,7 @@ public class MethodField implements IMethodField {
     }
 
     public function write(data:ByteArray):void {
+        _domain.write(data, _value);
     }
 
     public function get name():String {
