@@ -13,7 +13,9 @@ import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 
 public interface ITransport extends IEventDispatcher {
-    function open(connectionParameters:ConnectionParameters):void;
+    function connect(connectionParameters:ConnectionParameters):void;
+    function open(host:String):void;
+
     function get connected():Boolean;
 }
 }

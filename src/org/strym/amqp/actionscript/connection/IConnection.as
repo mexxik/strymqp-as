@@ -10,9 +10,10 @@ public interface IConnection {
     function get connectionParameters():ConnectionParameters;
     function set connectionParameters(value:ConnectionParameters):void;
 
-    function open():void;
-    function get isOpened():Boolean;
+    function connect():void;
 
-    function get isStarted():Boolean;
+    function get connected():Boolean;
+    function get started():Boolean;
+    function get tuned():Boolean;
 }
 }

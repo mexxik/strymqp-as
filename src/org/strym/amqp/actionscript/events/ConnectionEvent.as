@@ -11,7 +11,8 @@ import flash.events.Event;
 import org.as3commons.collections.SortedMap;
 
 public class ConnectionEvent extends Event {
-    static public const CONNECTION_START:String = "connectionStart";
+    static public const CONNECTION_STARTED:String = "connectionStarted";
+    static public const CONNECTION_TUNED:String = "connectionTuned";
 
     private var _arguments:SortedMap;
 

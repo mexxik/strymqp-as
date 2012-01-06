@@ -17,19 +17,24 @@ import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
+import org.strym.amqp.actionscript.transport.IFrame;
 import org.strym.amqp.actionscript.transport.Transport;
 import org.strym.amqp.actionscript.utils.DataUtils;
 
 public class Transport091 extends Transport {
 
-    private var _currentFrame:Frame091;
+    private var _currentFrame:IFrame;
 
     private var _tuneProperties:TuneProperties = new TuneProperties();
 
     private var _channels:Map = new Map();
 
-    override public function open(connectionParameters:ConnectionParameters):void {
-        super.open(connectionParameters);
+    override public function connect(connectionParameters:ConnectionParameters):void {
+        super.connect(connectionParameters);
+    }
+
+    override public function open(host:String):void {
+
     }
 
     override protected function sendHeader():void {
@@ -113,10 +118,12 @@ public class Transport091 extends Transport {
     }
 
     private function processMethod(method:IProtocolMethod):void {
+        var connectionEvent:ConnectionEvent;
+
         switch (method.qualifiedName) {
             case "connection.start":
                 // received Connection.Start
-                var connectionEvent:ConnectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_START);
+                connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_STARTED);
                 connectionEvent.arguments = method.fields;
 
                 dispatchEvent(connectionEvent);
@@ -149,14 +156,6 @@ public class Transport091 extends Transport {
 
 
                 writeMethodAndFlush(startOkFrame, startOkMethod);
-                /*startOkMethod.write(startOkFrame.payload);
-
-                 var startOkFrameByteArray:ByteArray = new ByteArray();
-                 startOkFrame.write(startOkFrameByteArray);
-
-                 _delegate.writeBytes(startOkFrameByteArray);
-                 _delegate.flush();*/
-
 
                 break;
 
@@ -165,6 +164,9 @@ public class Transport091 extends Transport {
                 _tuneProperties.frameMax = method.getField("frame-max") as uint;
                 _tuneProperties.heartbeat = method.getField("heartbeat") as int;
 
+                connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_TUNED);
+
+                dispatchEvent(connectionEvent);
 
                 // sending back Connection.Tune-Ok
                 var tuneOkFrame:Frame091 = new Frame091();
@@ -183,7 +185,7 @@ public class Transport091 extends Transport {
         }
     }
 
-    private function writeMethodAndFlush(frame:Frame091, method:IProtocolMethod):void {
+    private function writeMethodAndFlush(frame:IFrame, method:IProtocolMethod):void {
         method.write(frame.payload);
 
         var byteArray:ByteArray = new ByteArray();

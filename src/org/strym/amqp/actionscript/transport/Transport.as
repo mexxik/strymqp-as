@@ -33,7 +33,7 @@ public class Transport extends EventDispatcher implements ITransport {
         }
     }
 
-    public function open(connectionParameters:ConnectionParameters):void {
+    public function connect(connectionParameters:ConnectionParameters):void {
         _connectionParameters = connectionParameters;
 
         _delegate = new SocketDelegate();
@@ -44,6 +44,9 @@ public class Transport extends EventDispatcher implements ITransport {
         _delegate.addEventListener(ProgressEvent.SOCKET_DATA, delegate_dataHandler);
 
         _delegate.open(_connectionParameters);
+    }
+
+    public function open(host:String):void {
     }
 
     public function get connected():Boolean {

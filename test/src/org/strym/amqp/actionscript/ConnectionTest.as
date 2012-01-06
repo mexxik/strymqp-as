@@ -33,7 +33,7 @@ public class ConnectionTest {
         _connectionFactory = new ConnectionFactory(_connectionParameters);
         _connection = _connectionFactory.connection;
 
-        _connection.open();
+        _connection.connect();
     }
 
     [After]
@@ -64,7 +64,7 @@ public class ConnectionTest {
      */
     [Test(async)]
     public function testConnectionStarted():void {
-        assertTrue(_connection.isStarted, "connected was not started");
+        assertTrue(_connection.started, "connected was not started");
     }
 }
 }

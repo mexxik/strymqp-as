@@ -23,6 +23,7 @@ public class Connection implements IConnection {
     protected var _transport:ITransport;
 
     protected var _started:Boolean = false;
+    protected var _tuned:Boolean = false;
 
     public function Connection(connectionParameters:ConnectionParameters) {
         _connectionParameters = connectionParameters;
@@ -36,33 +37,41 @@ public class Connection implements IConnection {
         _connectionParameters = connectionParameters;
     }
 
-    public function open():void {
-        if (_connectionParameters && !isOpened) {
+    public function connect():void {
+        if (_connectionParameters && !connected) {
             _transport = Transport.getTransport(_connectionParameters.protocol);
 
-            _transport.addEventListener(ConnectionEvent.CONNECTION_START, transport_connectionStartHandler);
+            _transport.addEventListener(ConnectionEvent.CONNECTION_STARTED, transport_connectionStartedHandler);
+            _transport.addEventListener(ConnectionEvent.CONNECTION_TUNED, transport_connectionTunerHandler);
 
-            _transport.open(_connectionParameters);
+            _transport.connect(_connectionParameters);
         }
         else {
             throw Error("connection parameters are not specified");
         }
     }
 
-    public function get isOpened():Boolean {
+    public function get connected():Boolean {
         return _transport ? _transport.connected : false;
     }
 
-
-    public function get isStarted():Boolean {
+    public function get started():Boolean {
         return _started;
+    }
+
+    public function get tuned():Boolean {
+        return _tuned;
     }
 
     /**
      * transport event handlers
      */
-    protected function transport_connectionStartHandler(event:ConnectionEvent):void {
+    protected function transport_connectionStartedHandler(event:ConnectionEvent):void {
         _started = true;
+    }
+
+    protected function transport_connectionTunerHandler(event:ConnectionEvent):void {
+        _tuned = true;
     }
 }
 }
