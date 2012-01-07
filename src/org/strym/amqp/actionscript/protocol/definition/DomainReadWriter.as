@@ -7,6 +7,8 @@
  */
 package org.strym.amqp.actionscript.protocol.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
 import org.as3commons.collections.SortedMap;
 
@@ -14,46 +16,46 @@ public class DomainReadWriter implements IDomainReaderWriter {
     public function DomainReadWriter() {
     }
 
-    public function readBit(data:ByteArray):Boolean {
+    public function readBit(data:IDataInput):Boolean {
         return false;
     }
 
-    public function writeBit(data:ByteArray, bit:Boolean):void {
+    public function writeBit(data:IDataOutput, bit:Boolean):void {
     }
 
-    public function readOctet(data:ByteArray):uint {
+    public function readOctet(data:IDataInput):uint {
         return 0;
     }
 
-    public function writeOctet(data:ByteArray, octet:uint):void {
+    public function writeOctet(data:IDataOutput, octet:uint):void {
     }
 
-    public function writeShortString(data:ByteArray, string:String):void {
+    public function writeShortString(data:IDataOutput, string:String):void {
     }
 
-    public function readShortString(data:ByteArray):String {
+    public function readShortString(data:IDataInput):String {
         return "";
     }
 
-    public function readLongString(data:ByteArray):ByteArray {
+    public function readLongString(data:IDataInput):ByteArray {
         return new ByteArray();
     }
 
-    public function writeLongString(data:ByteArray, string:ByteArray):void {
+    public function writeLongString(data:IDataOutput, string:ByteArray):void {
         }
 
-    public function readTimestamp(data:ByteArray):Date {
+    public function readTimestamp(data:IDataInput):Date {
         return new Date();
     }
 
-    public function writeTimestamp(data:ByteArray, timestamp:Date):void {
+    public function writeTimestamp(data:IDataOutput, timestamp:Date):void {
     }
 
-    public function readTable(data:ByteArray):SortedMap {
+    public function readTable(data:IDataInput):SortedMap {
         return null;
     }
 
-    public function writeTable(data:ByteArray, table:SortedMap):void {
+    public function writeTable(data:IDataOutput, table:SortedMap):void {
     }
 }
 }

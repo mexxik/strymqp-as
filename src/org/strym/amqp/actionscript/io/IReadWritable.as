@@ -7,9 +7,11 @@
  */
 package org.strym.amqp.actionscript.io {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
-public interface ByteReadWritable {
-    function read(data:ByteArray):void;
-    function write(data:ByteArray):void;
+public interface IReadWritable {
+    function read(data:IDataInput):void;
+    function write(data:IDataOutput):void;
 }
 }

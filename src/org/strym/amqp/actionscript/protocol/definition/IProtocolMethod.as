@@ -9,9 +9,9 @@ package org.strym.amqp.actionscript.protocol.definition {
 import flash.utils.ByteArray;
 
 import org.as3commons.collections.SortedMap;
-import org.strym.amqp.actionscript.io.ByteReadWritable;
+import org.strym.amqp.actionscript.io.IReadWritable;
 
-public interface IProtocolMethod extends ByteReadWritable {
+public interface IProtocolMethod extends IReadWritable {
     function get id():int;
     function get name():String;
     function get qualifiedName():String;

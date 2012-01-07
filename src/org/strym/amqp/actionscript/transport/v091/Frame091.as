@@ -7,8 +7,10 @@
  */
 package org.strym.amqp.actionscript.transport.v091 {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
-import org.strym.amqp.actionscript.io.ByteReadWritable;
+import org.strym.amqp.actionscript.io.IReadWritable;
 import org.strym.amqp.actionscript.transport.Frame;
 
 public class Frame091 extends Frame {
@@ -17,7 +19,7 @@ public class Frame091 extends Frame {
     public function Frame091() {
     }
 
-    override public function read(data:ByteArray):void {
+    override public function read(data:IDataInput):void {
         if (!_isHeaderComplete) {
 
             // not enough data
@@ -53,7 +55,7 @@ public class Frame091 extends Frame {
         _isComplete = true;
     }
 
-    override public function write(data:ByteArray):void {
+    override public function write(data:IDataOutput):void {
         data.writeByte(_type);
         data.writeShort(_channel);
         data.writeInt(_payload.length);

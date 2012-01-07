@@ -7,6 +7,8 @@
  */
 package org.strym.amqp.actionscript.protocol.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
 import org.as3commons.collections.Map;
 import org.as3commons.collections.SortedMap;
@@ -41,7 +43,7 @@ public class ProtocolMethod implements IProtocolMethod {
         field.value = value;
     }
 
-    public function read(data:ByteArray):void {
+    public function read(data:IDataInput):void {
         var iterator:IIterator = _fields.iterator();
         while (iterator.hasNext()) {
             var field:IMethodField = iterator.next();
@@ -49,7 +51,7 @@ public class ProtocolMethod implements IProtocolMethod {
         }
     }
 
-    public function write(data:ByteArray):void {
+    public function write(data:IDataOutput):void {
 
     }
 

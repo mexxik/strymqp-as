@@ -5,7 +5,7 @@
  * Time: 9:22 PM
  * To change this template use File | Settings | File Templates.
  */
-package org.strym.amqp.actionscript.transport.v091 {
+package org.strym.amqp.actionscript.transport {
 public class TuneProperties {
     private var _channelMax:int;
     private var _frameMax:uint;

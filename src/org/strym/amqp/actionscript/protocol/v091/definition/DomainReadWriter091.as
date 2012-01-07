@@ -7,6 +7,8 @@
  */
 package org.strym.amqp.actionscript.protocol.v091.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
 import org.as3commons.collections.SortedMap;
 import org.as3commons.collections.framework.IIterator;
@@ -18,36 +20,36 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
 
-    override public function readBit(data:ByteArray):Boolean {
+    override public function readBit(data:IDataInput):Boolean {
         return false;
     }
 
-    override public function writeBit(data:ByteArray, bit:Boolean):void {
+    override public function writeBit(data:IDataOutput, bit:Boolean):void {
         super.writeBit(data, bit);
     }
 
-    override public function readOctet(data:ByteArray):uint {
+    override public function readOctet(data:IDataInput):uint {
         return data.readUnsignedByte();
     }
 
-    override public function writeOctet(data:ByteArray, octet:uint):void {
+    override public function writeOctet(data:IDataOutput, octet:uint):void {
         data.writeByte(octet);
     }
 
-    override public function readShortString(data:ByteArray):String {
+    override public function readShortString(data:IDataInput):String {
         var length:uint = data.readUnsignedByte();
         var result:String = data.readUTFBytes(length);
 
         return result;
     }
 
-    override public function writeShortString(data:ByteArray, string:String):void {
+    override public function writeShortString(data:IDataOutput, string:String):void {
         data.writeByte(string.length);
         data.writeUTFBytes(string);
     }
 
     // TODO check if read/write long string is correct
-    override public function readLongString(data:ByteArray):ByteArray {
+    override public function readLongString(data:IDataInput):ByteArray {
         var result:ByteArray = new ByteArray();
 
         data.readBytes(result, 0, data.readUnsignedInt());
@@ -56,12 +58,12 @@ public class DomainReadWriter091 extends DomainReadWriter {
         return result;
     }
 
-    override public function writeLongString(data:ByteArray, string:ByteArray):void {
+    override public function writeLongString(data:IDataOutput, string:ByteArray):void {
         data.writeUnsignedInt(string.length);
         data.writeBytes(string, 0, string.length);
     }
 
-    override public function readTimestamp(data:ByteArray):Date {
+    override public function readTimestamp(data:IDataInput):Date {
         var result:Date = new Date();
 
         var upper:uint = data.readUnsignedInt();
@@ -72,20 +74,20 @@ public class DomainReadWriter091 extends DomainReadWriter {
         return result;
     }
 
-    override public function writeTimestamp(data:ByteArray, timestamp:Date):void {
+    override public function writeTimestamp(data:IDataOutput, timestamp:Date):void {
         data.writeUnsignedInt(0);
         data.writeUnsignedInt(timestamp.getTime() * 1000);
     }
 
-    override public function readTable(data:ByteArray):SortedMap {
+    override public function readTable(data:IDataInput):SortedMap {
         var result:SortedMap = new SortedMap();
 
         var length:uint = data.readUnsignedInt();
 
         if (length) {
-            var start:uint = data.position;
+            var start:uint = (data as ByteArray).position;
 
-            while (data.position < (start + length)) {
+            while ((data as ByteArray).position < (start + length)) {
                 var name:String = readShortString(data);
                 var type:uint = data.readUnsignedByte();
                 var value:* = null;
@@ -122,7 +124,7 @@ public class DomainReadWriter091 extends DomainReadWriter {
         return result;
     }
 
-    override public function writeTable(data:ByteArray, table:SortedMap):void {
+    override public function writeTable(data:IDataOutput, table:SortedMap):void {
         //data.writeByte(70);
 
         var content:ByteArray = new ByteArray();

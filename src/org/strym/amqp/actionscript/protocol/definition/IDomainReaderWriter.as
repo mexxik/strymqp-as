@@ -7,26 +7,28 @@
  */
 package org.strym.amqp.actionscript.protocol.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
 import org.as3commons.collections.SortedMap;
 
 public interface IDomainReaderWriter {
-    function readBit(data:ByteArray):Boolean;
-    function writeBit(data:ByteArray, bit:Boolean):void;
+    function readBit(data:IDataInput):Boolean;
+    function writeBit(data:IDataOutput, bit:Boolean):void;
 
-    function readOctet(data:ByteArray):uint;
-    function writeOctet(data:ByteArray, octet:uint):void;
+    function readOctet(data:IDataInput):uint;
+    function writeOctet(data:IDataOutput, octet:uint):void;
 
-    function readShortString(data:ByteArray):String;
-    function writeShortString(data:ByteArray, string:String):void;
+    function readShortString(data:IDataInput):String;
+    function writeShortString(data:IDataOutput, string:String):void;
 
-    function readLongString(data:ByteArray):ByteArray;
-    function writeLongString(data:ByteArray, string:ByteArray):void;
+    function readLongString(data:IDataInput):ByteArray;
+    function writeLongString(data:IDataOutput, string:ByteArray):void;
 
-    function readTimestamp(data:ByteArray):Date;
-    function writeTimestamp(data:ByteArray, timestamp:Date):void;
+    function readTimestamp(data:IDataInput):Date;
+    function writeTimestamp(data:IDataOutput, timestamp:Date):void;
 
-    function readTable(data:ByteArray):SortedMap;
-    function writeTable(data:ByteArray, table:SortedMap):void;
+    function readTable(data:IDataInput):SortedMap;
+    function writeTable(data:IDataOutput, table:SortedMap):void;
 }
 }

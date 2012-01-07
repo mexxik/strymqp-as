@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.protocol.v091.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataOutput;
 
 import org.as3commons.collections.framework.IIterator;
 import org.strym.amqp.actionscript.protocol.definition.IMethodField;
@@ -18,7 +19,7 @@ public class ProtocolMethod091 extends ProtocolMethod {
 
     }
 
-    override public function write(data:ByteArray):void {
+    override public function write(data:IDataOutput):void {
         data.writeShort(_protocolClass.id);
         data.writeShort(id);
 

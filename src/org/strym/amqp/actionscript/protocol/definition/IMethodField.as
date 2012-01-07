@@ -6,9 +6,9 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.protocol.definition {
-import org.strym.amqp.actionscript.io.ByteReadWritable;
+import org.strym.amqp.actionscript.io.IReadWritable;
 
-public interface IMethodField extends ByteReadWritable {
+public interface IMethodField extends IReadWritable {
     function get name():String;
     function get domain():IProtocolDomain;
     function get value():*;

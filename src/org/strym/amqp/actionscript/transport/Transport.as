@@ -14,6 +14,7 @@ import flash.events.ProgressEvent;
 import org.as3commons.collections.Map;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
+import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
@@ -25,7 +26,7 @@ public class Transport extends EventDispatcher implements ITransport {
 
     protected var _delegate:IODelegate;
 
-    private var _channels:Map = new Map();
+    protected var _channels:Map = new Map();
 
     static public function getTransport(protocol:IProtocol):ITransport {
         switch (protocol.version) {
@@ -62,6 +63,9 @@ public class Transport extends EventDispatcher implements ITransport {
 
     protected function addChannel(channel:IChannel):void {
         _channels.add(channel.id, channel);
+
+        channel.addEventListener(ConnectionEvent.CONNECTION_STARTED, channel_connectionStartedHandler);
+        channel.addEventListener(ConnectionEvent.CONNECTION_TUNED, channel_connectionTunedHandler);
     }
 
     /*
@@ -81,5 +85,17 @@ public class Transport extends EventDispatcher implements ITransport {
 
     protected function delegate_dataHandler(event:ProgressEvent):void {
     }
+
+    /*
+     Channel event handlers
+     */
+    protected function channel_connectionStartedHandler(event:ConnectionEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function channel_connectionTunedHandler(event:ConnectionEvent):void {
+        dispatchEvent(event);
+    }
+
 }
 }

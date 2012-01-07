@@ -7,14 +7,16 @@
  */
 package org.strym.amqp.actionscript.protocol.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
-import org.strym.amqp.actionscript.io.ByteReadWritable;
+import org.strym.amqp.actionscript.io.IReadWritable;
 
 public interface IProtocolDomain {
     function get name():String;
     function get type():String;
 
-    function read(data:ByteArray):*;
-    function write(data:ByteArray, value:*):void;
+    function read(data:IDataInput):*;
+    function write(data:IDataOutput, value:*):void;
 }
 }

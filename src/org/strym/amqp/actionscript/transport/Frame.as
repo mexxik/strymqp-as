@@ -7,8 +7,10 @@
  */
 package org.strym.amqp.actionscript.transport {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
-import org.strym.amqp.actionscript.io.ByteReadWritable;
+import org.strym.amqp.actionscript.io.IReadWritable;
 
 public class Frame implements IFrame {
     protected var _isComplete:Boolean = false;
@@ -70,10 +72,10 @@ public class Frame implements IFrame {
         _payload = value;
     }
 
-    public function read(data:ByteArray):void {
+    public function read(data:IDataInput):void {
     }
 
-    public function write(data:ByteArray):void {
+    public function write(data:IDataOutput):void {
     }
 }
 }

@@ -6,6 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.transport.v091 {
+import flash.events.Event;
 import flash.events.ProgressEvent;
 import flash.utils.ByteArray;
 
@@ -17,8 +18,10 @@ import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
+import org.strym.amqp.actionscript.transport.IChannel;
 import org.strym.amqp.actionscript.transport.IFrame;
 import org.strym.amqp.actionscript.transport.Transport;
+import org.strym.amqp.actionscript.transport.TuneProperties;
 import org.strym.amqp.actionscript.utils.DataUtils;
 
 public class Transport091 extends Transport {
@@ -26,6 +29,9 @@ public class Transport091 extends Transport {
     private var _currentFrame:IFrame;
 
     private var _tuneProperties:TuneProperties = new TuneProperties();
+
+    public function Transport091() {
+    }
 
     override public function connect(connectionParameters:ConnectionParameters):void {
         super.connect(connectionParameters);
@@ -48,104 +54,164 @@ public class Transport091 extends Transport {
     /**
      * IO overrides
      */
+    override protected function delegate_connectHandler(event:Event):void {
+        var controlChannel:IChannel = new Channel091(0, _connectionParameters.protocol);
+        addChannel(controlChannel);
+
+        super.delegate_connectHandler(event);
+    }
+
     override protected function delegate_dataHandler(event:ProgressEvent):void {
         if (_delegate.bytesAvailable > 0) {
             if (!_currentFrame)
                 _currentFrame = new Frame091();
 
             if (!_currentFrame.isComplete) {
-                var frameBytes:ByteArray = new ByteArray();
-                _delegate.readBytes(frameBytes);
-                _currentFrame.read(frameBytes);
+                _currentFrame.read(_delegate);
             }
         }
 
         if (_currentFrame.isComplete) {
-            switch (_currentFrame.type) {
-                // TODO retrieve these constants from the protocol definition
-                case 1:
-                    var classId:int = _currentFrame.payload.readShort();
-                    var methodId:int = _currentFrame.payload.readShort();
-                    var protocolMethod:IProtocolMethod = _connectionParameters.protocol.getMethod(classId, methodId);
-
-                    protocolMethod.read(_currentFrame.payload);
-
-                    processMethod(protocolMethod);
-
-                    break;
-            }
-
-
+            var channel:IChannel = _channels.itemFor(_currentFrame.channel);
+            channel.handleFrame(_currentFrame);
+            
             _currentFrame = null;
+
+            /*
+             switch (_currentFrame.type) {
+             // TODO retrieve these constants from the protocol definition
+             case 1:
+             var classId:int = _currentFrame.payload.readShort();
+             var methodId:int = _currentFrame.payload.readShort();
+             var protocolMethod:IProtocolMethod = _connectionParameters.protocol.getMethod(classId, methodId);
+
+             protocolMethod.read(_currentFrame.payload);
+
+             processMethod(protocolMethod);
+
+             break;
+             }
+
+
+             _currentFrame = null;*/
         }
     }
 
+
+    override protected function channel_connectionStartedHandler(event:ConnectionEvent):void {
+        var startOkFrame:Frame091 = new Frame091();
+        startOkFrame.type = 1;
+        startOkFrame.channel = 0;
+
+        var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
+
+        var clientProperties:SortedMap = new SortedMap();
+        clientProperties.add("product", "StrymQP");
+        clientProperties.add("information", "http://www.strym.org");
+        clientProperties.add("platform", "Flash");
+        clientProperties.add("copyright", "Copyright (C) 2012 Strym");
+        clientProperties.add("version", "0.1.0");
+
+        startOkMethod.setField("client-properties", clientProperties);
+        startOkMethod.setField("mechanism", "PLAIN");
+
+        var responseByteArray:ByteArray = new ByteArray();
+        responseByteArray.writeByte(0);
+        responseByteArray.writeUTFBytes("guest");
+        responseByteArray.writeByte(0);
+        responseByteArray.writeUTFBytes("guest");
+
+        startOkMethod.setField("response", responseByteArray);
+        startOkMethod.setField("locale", "en_US");
+
+        writeMethodAndFlush(startOkFrame, startOkMethod);
+
+
+        super.channel_connectionStartedHandler(event);
+    }
+
+    override protected function channel_connectionTunedHandler(event:ConnectionEvent):void {
+        _tuneProperties = event.data;
+
+        var tuneOkFrame:Frame091 = new Frame091();
+        tuneOkFrame.type = 1;
+        tuneOkFrame.channel = 0;
+
+        var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("tune-ok");
+
+        tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
+        tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
+        tuneOkMethod.setField("heartbeat", _tuneProperties.heartbeat);
+
+        writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
+
+        super.channel_connectionTunedHandler(event);
+    }
+
     private function processMethod(method:IProtocolMethod):void {
-        var connectionEvent:ConnectionEvent;
+        /*switch (method.qualifiedName) {
+         case "connection.start":
+         // received Connection.Start
+         //connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_STARTED);
+         //connectionEvent.arguments = method.fields;
 
-        switch (method.qualifiedName) {
-            case "connection.start":
-                // received Connection.Start
-                connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_STARTED);
-                connectionEvent.arguments = method.fields;
+         //dispatchEvent(connectionEvent);
 
-                dispatchEvent(connectionEvent);
+         // sending back Connection.Start-Ok
+         var startOkFrame:Frame091 = new Frame091();
+         startOkFrame.type = 1;
+         startOkFrame.channel = 0;
 
-                // sending back Connection.Start-Ok
-                var startOkFrame:Frame091 = new Frame091();
-                startOkFrame.type = 1;
-                startOkFrame.channel = 0;
+         var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
 
-                var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
+         var clientProperties:SortedMap = new SortedMap();
+         clientProperties.add("product", "StrymQP");
+         clientProperties.add("information", "http://www.strym.org");
+         clientProperties.add("platform", "Flash");
+         clientProperties.add("copyright", "Copyright (C) 2012 Strym");
+         clientProperties.add("version", "0.1.0");
 
-                var clientProperties:SortedMap = new SortedMap();
-                clientProperties.add("product", "StrymQP");
-                clientProperties.add("information", "http://www.strym.org");
-                clientProperties.add("platform", "Flash");
-                clientProperties.add("copyright", "Copyright (C) 2012 Strym");
-                clientProperties.add("version", "0.1.0");
+         startOkMethod.setField("client-properties", clientProperties);
+         startOkMethod.setField("mechanism", "PLAIN");
 
-                startOkMethod.setField("client-properties", clientProperties);
-                startOkMethod.setField("mechanism", "PLAIN");
+         var responseByteArray:ByteArray = new ByteArray();
+         responseByteArray.writeByte(0);
+         responseByteArray.writeUTFBytes("guest");
+         responseByteArray.writeByte(0);
+         responseByteArray.writeUTFBytes("guest");
 
-                var responseByteArray:ByteArray = new ByteArray();
-                responseByteArray.writeByte(0);
-                responseByteArray.writeUTFBytes("guest");
-                responseByteArray.writeByte(0);
-                responseByteArray.writeUTFBytes("guest");
-
-                startOkMethod.setField("response", responseByteArray);
-                startOkMethod.setField("locale", "en_US");
+         startOkMethod.setField("response", responseByteArray);
+         startOkMethod.setField("locale", "en_US");
 
 
-                writeMethodAndFlush(startOkFrame, startOkMethod);
+         writeMethodAndFlush(startOkFrame, startOkMethod);
 
-                break;
+         break;
 
-            case "connection.tune":
-                _tuneProperties.channelMax = method.getField("channel-max") as int;
-                _tuneProperties.frameMax = method.getField("frame-max") as uint;
-                _tuneProperties.heartbeat = method.getField("heartbeat") as int;
+         case "connection.tune":
+         _tuneProperties.channelMax = method.getField("channel-max") as int;
+         _tuneProperties.frameMax = method.getField("frame-max") as uint;
+         _tuneProperties.heartbeat = method.getField("heartbeat") as int;
 
-                connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_TUNED);
+         //connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_TUNED);
 
-                dispatchEvent(connectionEvent);
+         //dispatchEvent(connectionEvent);
 
-                // sending back Connection.Tune-Ok
-                var tuneOkFrame:Frame091 = new Frame091();
-                tuneOkFrame.type = 1;
-                tuneOkFrame.channel = 0;
+         // sending back Connection.Tune-Ok
+         var tuneOkFrame:Frame091 = new Frame091();
+         tuneOkFrame.type = 1;
+         tuneOkFrame.channel = 0;
 
-                var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("tune-ok");
+         var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("tune-ok");
 
-                tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
-                tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
-                tuneOkMethod.setField("heartbeat", _tuneProperties.heartbeat);
+         tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
+         tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
+         tuneOkMethod.setField("heartbeat", _tuneProperties.heartbeat);
 
-                writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
+         writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
 
-                break;
-        }
+         break;
+         }*/
     }
 
     private function writeMethodAndFlush(frame:IFrame, method:IProtocolMethod):void {
@@ -157,5 +223,7 @@ public class Transport091 extends Transport {
         _delegate.writeBytes(byteArray);
         _delegate.flush();
     }
+
+
 }
 }

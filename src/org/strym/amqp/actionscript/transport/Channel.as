@@ -8,10 +8,15 @@
 package org.strym.amqp.actionscript.transport {
 import flash.events.EventDispatcher;
 
+import org.strym.amqp.actionscript.protocol.IProtocol;
+
 public class Channel extends EventDispatcher implements IChannel  {
     protected var _id:uint;
+    protected var _protocol:IProtocol;
 
-    public function Channel() {
+    public function Channel(id:uint, protocol:IProtocol) {
+        _id = id;
+        _protocol = protocol;
     }
 
     public function get id():uint {

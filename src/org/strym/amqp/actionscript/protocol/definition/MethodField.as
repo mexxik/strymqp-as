@@ -7,6 +7,8 @@
  */
 package org.strym.amqp.actionscript.protocol.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
 public class MethodField implements IMethodField {
     protected var _name:String;
@@ -16,11 +18,11 @@ public class MethodField implements IMethodField {
     public function MethodField() {
     }
 
-    public function read(data:ByteArray):void {
+    public function read(data:IDataInput):void {
         _value = _domain.read(data);
     }
 
-    public function write(data:ByteArray):void {
+    public function write(data:IDataOutput):void {
         _domain.write(data, _value);
     }
 

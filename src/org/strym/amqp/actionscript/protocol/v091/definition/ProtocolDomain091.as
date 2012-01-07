@@ -7,6 +7,8 @@
  */
 package org.strym.amqp.actionscript.protocol.v091.definition {
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 
@@ -19,7 +21,7 @@ public class ProtocolDomain091 extends ProtocolDomain {
     }
 
 
-    override public function read(data:ByteArray):* {
+    override public function read(data:IDataInput):* {
         var result:*;
 
         switch (_type) {
@@ -47,7 +49,7 @@ public class ProtocolDomain091 extends ProtocolDomain {
         return result;
     }
 
-    override public function write(data:ByteArray, value:*):void {
+    override public function write(data:IDataOutput, value:*):void {
         //super.write(value);
         if (value != null) {
             switch (_type) {

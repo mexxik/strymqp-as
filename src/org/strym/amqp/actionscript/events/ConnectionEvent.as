@@ -15,6 +15,7 @@ public class ConnectionEvent extends Event {
     static public const CONNECTION_TUNED:String = "connectionTuned";
 
     private var _arguments:SortedMap;
+    private var _data:*;
 
     public function ConnectionEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) {
             super(type, bubbles, cancelable);
@@ -22,6 +23,8 @@ public class ConnectionEvent extends Event {
 
     override public function clone():Event {
         var result:ConnectionEvent = new ConnectionEvent(type, bubbles, cancelable);
+        result.arguments = _arguments;
+        result.data = _data;
 
         return result;
     }
@@ -32,6 +35,14 @@ public class ConnectionEvent extends Event {
 
     public function set arguments(value:SortedMap):void {
         _arguments = value;
+    }
+
+    public function get data():* {
+        return _data;
+    }
+
+    public function set data(value:*):void {
+        _data = value;
     }
 }
 }

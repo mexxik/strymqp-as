@@ -8,9 +8,9 @@
 package org.strym.amqp.actionscript.transport {
 import flash.utils.ByteArray;
 
-import org.strym.amqp.actionscript.io.ByteReadWritable;
+import org.strym.amqp.actionscript.io.IReadWritable;
 
-public interface IFrame extends ByteReadWritable {
+public interface IFrame extends IReadWritable {
     function get isComplete():Boolean;
     function set isComplete(value:Boolean):void;
 
