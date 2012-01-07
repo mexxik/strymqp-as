@@ -27,8 +27,6 @@ public class Transport091 extends Transport {
 
     private var _tuneProperties:TuneProperties = new TuneProperties();
 
-    private var _channels:Map = new Map();
-
     override public function connect(connectionParameters:ConnectionParameters):void {
         super.connect(connectionParameters);
     }
@@ -56,44 +54,9 @@ public class Transport091 extends Transport {
                 _currentFrame = new Frame091();
 
             if (!_currentFrame.isComplete) {
-                if (!_currentFrame.isHeaderComplete) {
-
-                    // not enough data
-                    if (_delegate.bytesAvailable < 8)
-                        return;
-
-                    _currentFrame.type = _delegate.readUnsignedByte();
-
-                    if (_currentFrame.type == ('A' as uint)) {
-                        // possibly wrong protocol
-                        // TODO implement proper handling
-                    }
-
-                    _currentFrame.channel = _delegate.readUnsignedShort();
-                    _currentFrame.payloadSize = _delegate.readInt();
-
-                    _currentFrame.isHeaderComplete = true;
-                }
-
-                if (_currentFrame.payloadSize > 0 &&
-                        _currentFrame.payload.length < _currentFrame.payloadSize) {
-
-                    _delegate.readBytes(
-                            _currentFrame.payload,
-                            _currentFrame.payload.length,
-                            Math.min(_delegate.bytesAvailable, _currentFrame.payloadSize - _currentFrame.payload.length)
-                    );
-
-                    if (_currentFrame.payload.length < _currentFrame.payloadSize)
-                        return;
-                }
-
-                if (_delegate.bytesAvailable > 0)
-                    var frameEnd:int = _delegate.readUnsignedByte();
-
-                // TODO handler end frame marker handling (code: 206)
-
-                _currentFrame.isComplete = true;
+                var frameBytes:ByteArray = new ByteArray();
+                _delegate.readBytes(frameBytes);
+                _currentFrame.read(frameBytes);
             }
         }
 

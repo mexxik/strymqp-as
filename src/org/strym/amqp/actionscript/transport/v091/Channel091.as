@@ -6,15 +6,15 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.transport.v091 {
-public class Channel091 {
-    static private var _protocolDefinition:Object = loadProtocolDefinition();
+import org.strym.amqp.actionscript.transport.Channel;
+import org.strym.amqp.actionscript.transport.IFrame;
 
+public class Channel091 extends Channel {
     public function Channel091() {
     }
 
-    static private function loadProtocolDefinition():Object {
-        return new Object();
+    override public function handleFrame(frame:IFrame):void {
+        super.handleFrame(frame);
     }
-
 }
 }

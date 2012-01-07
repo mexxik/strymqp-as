@@ -72,6 +72,8 @@ public class Connection implements IConnection {
 
     protected function transport_connectionTunerHandler(event:ConnectionEvent):void {
         _tuned = true;
+
+        _transport.open("/")
     }
 }
 }
