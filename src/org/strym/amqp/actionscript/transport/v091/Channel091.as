@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.transport.v091 {
 import org.as3commons.collections.SortedMap;
+import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
@@ -37,13 +38,13 @@ public class Channel091 extends Channel {
 
     private function handlerMethod(method:IProtocolMethod):void {
         var connectionEvent:ConnectionEvent;
+        var channelEvent:ChannelEvent;
 
         switch (method.qualifiedName) {
+            // connection class
             case "connection.start":
                 connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_STARTED);
                 connectionEvent.arguments = method.fields;
-
-                dispatchEvent(connectionEvent);
 
                 break;
 
@@ -56,10 +57,24 @@ public class Channel091 extends Channel {
                 connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_TUNED);
                 connectionEvent.data = tuneProperties;
 
-                dispatchEvent(connectionEvent);
+                break;
+
+            case "connection.open-ok":
+                connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_OPENED);
 
                 break;
+
+            // channel class
+            case "channel.open-ok":
+                channelEvent = new ChannelEvent(ChannelEvent.CHANNEL_OPENED);
+                break;
         }
+
+        if (connectionEvent)
+            dispatchEvent(connectionEvent);
+
+        if (channelEvent)
+            dispatchEvent(channelEvent);
     }
 
     /*

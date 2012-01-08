@@ -6,7 +6,12 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.connection {
-public interface IConnection {
+import flash.events.IEventDispatcher;
+
+public interface IConnection extends IEventDispatcher {
+    function get name():String;
+    function set name(value:String):void;
+
     function get connectionParameters():ConnectionParameters;
     function set connectionParameters(value:ConnectionParameters):void;
 

@@ -15,6 +15,7 @@ import org.as3commons.collections.SortedMap;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.di.Injector;
+import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
@@ -49,6 +50,17 @@ public class Transport091 extends Transport {
         super.connect(connectionParameters);
     }
 
+    override protected function getChannel(id:int):IChannel {
+        var result:IChannel = _channels.itemFor(id);
+        
+        if (!result) {
+            result = new Channel091(id, _connectionParameters.protocol);
+            addChannel(result);
+        }
+
+        return result;
+    }
+
     override public function open(host:String):void {
         var openFrame:IFrame = new Frame091();
         openFrame.type = 1;
@@ -60,7 +72,6 @@ public class Transport091 extends Transport {
         openMethod.setField("reserved-2", false);
 
         writeMethodAndFlush(openFrame, openMethod);
-
     }
 
     override protected function sendHeader():void {
@@ -94,14 +105,26 @@ public class Transport091 extends Transport {
         }
 
         if (_currentFrame.isComplete) {
-            var channel:IChannel = _channels.itemFor(_currentFrame.channel);
+            var channel:IChannel = getChannel(_currentFrame.channel);
             channel.handleFrame(_currentFrame);
 
             _currentFrame = null;
         }
     }
 
+    private function writeMethodAndFlush(frame:IFrame, method:IProtocolMethod):void {
+        method.write(frame.payload);
 
+        var byteArray:ByteArray = new ByteArray();
+        frame.write(byteArray);
+
+        _delegate.writeBytes(byteArray);
+        _delegate.flush();
+    }
+
+    /*
+     overridden handlers
+     */
     override protected function channel_connectionStartedHandler(event:ConnectionEvent):void {
         var startOkFrame:Frame091 = new Frame091();
         startOkFrame.type = 1;
@@ -125,8 +148,8 @@ public class Transport091 extends Transport {
         responseByteArray.writeByte(0);
         responseByteArray.writeUTFBytes("guest");
         /*var credentials:SortedMap = new SortedMap();
-        credentials.add("LOGIN", "guest");
-        credentials.add("PASSWORD", "guest");*/
+         credentials.add("LOGIN", "guest");
+         credentials.add("PASSWORD", "guest");*/
 
         startOkMethod.setField("response", responseByteArray);
         startOkMethod.setField("locale", "en_US");
@@ -155,16 +178,21 @@ public class Transport091 extends Transport {
         super.channel_connectionTunedHandler(event);
     }
 
-    private function writeMethodAndFlush(frame:IFrame, method:IProtocolMethod):void {
-        method.write(frame.payload);
+    override protected function channel_connectionOpenedHandler(event:ConnectionEvent):void {
+        var openChannelFrame:Frame091 = new Frame091();
+        openChannelFrame.type = 1;
+        openChannelFrame.channel = 1;
 
-        var byteArray:ByteArray = new ByteArray();
-        frame.write(byteArray);
+        var openChannelMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("channel", "open");
+        openChannelMethod.setField("reserved-1", 0);
 
-        _delegate.writeBytes(byteArray);
-        _delegate.flush();
+        writeMethodAndFlush(openChannelFrame, openChannelMethod);
+
+        super.channel_connectionOpenedHandler(event);
     }
 
-
+    override protected function channel_channelOpenedHandler(event:ChannelEvent):void {
+        super.channel_channelOpenedHandler(event);
+    }
 }
 }

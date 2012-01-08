@@ -15,6 +15,7 @@ import org.as3commons.collections.Map;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.di.Injector;
+import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
@@ -73,6 +74,13 @@ public class Transport extends EventDispatcher implements ITransport {
 
         channel.addEventListener(ConnectionEvent.CONNECTION_STARTED, channel_connectionStartedHandler);
         channel.addEventListener(ConnectionEvent.CONNECTION_TUNED, channel_connectionTunedHandler);
+        channel.addEventListener(ConnectionEvent.CONNECTION_OPENED, channel_connectionOpenedHandler);
+
+        channel.addEventListener(ChannelEvent.CHANNEL_OPENED, channel_channelOpenedHandler);
+    }
+
+    protected function getChannel(id:int):IChannel {
+        return null;
     }
 
     /*
@@ -101,6 +109,14 @@ public class Transport extends EventDispatcher implements ITransport {
     }
 
     protected function channel_connectionTunedHandler(event:ConnectionEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function channel_connectionOpenedHandler(event:ConnectionEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function channel_channelOpenedHandler(event:ChannelEvent):void {
         dispatchEvent(event);
     }
 

@@ -12,6 +12,7 @@ import flash.utils.IDataOutput;
 import org.strym.amqp.actionscript.io.IReadWritable;
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 
+// TODO: are setters really required here?
 public interface IFrame extends IReadWritable {
     function get isComplete():Boolean;
     function set isComplete(value:Boolean):void;

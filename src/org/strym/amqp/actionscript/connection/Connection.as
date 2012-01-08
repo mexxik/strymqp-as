@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.connection {
 import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
@@ -17,16 +18,27 @@ import org.strym.amqp.actionscript.io.SocketDelegate;
 import org.strym.amqp.actionscript.transport.ITransport;
 import org.strym.amqp.actionscript.transport.Transport;
 
-public class Connection implements IConnection {
+public class Connection extends EventDispatcher implements IConnection {
+    protected var _name:String;
+    
     protected var _connectionParameters:ConnectionParameters;
 
     protected var _transport:ITransport;
 
     protected var _started:Boolean = false;
     protected var _tuned:Boolean = false;
+    protected var _opened:Boolean = false;
 
     public function Connection(connectionParameters:ConnectionParameters) {
         _connectionParameters = connectionParameters;
+    }
+
+    public function get name():String {
+        return _name;
+    }
+
+    public function set name(value:String):void {
+        _name = value;
     }
 
     public function get connectionParameters():ConnectionParameters {
@@ -42,7 +54,8 @@ public class Connection implements IConnection {
             _transport = Transport.getTransport(_connectionParameters.protocol);
 
             _transport.addEventListener(ConnectionEvent.CONNECTION_STARTED, transport_connectionStartedHandler);
-            _transport.addEventListener(ConnectionEvent.CONNECTION_TUNED, transport_connectionTunerHandler);
+            _transport.addEventListener(ConnectionEvent.CONNECTION_TUNED, transport_connectionTunedHandler);
+            _transport.addEventListener(ConnectionEvent.CONNECTION_OPENED, transport_connectionOpenedHandler);
 
             _transport.connect(_connectionParameters);
         }
@@ -70,10 +83,18 @@ public class Connection implements IConnection {
         _started = true;
     }
 
-    protected function transport_connectionTunerHandler(event:ConnectionEvent):void {
+    protected function transport_connectionTunedHandler(event:ConnectionEvent):void {
         _tuned = true;
 
         _transport.open("/");
+    }
+
+    protected function transport_connectionOpenedHandler(event:ConnectionEvent):void {
+        _opened = true;
+
+        event.connection = this;
+
+        dispatchEvent(event);
     }
 }
 }

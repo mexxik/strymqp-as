@@ -9,10 +9,14 @@ package org.strym.amqp.actionscript.events {
 import flash.events.Event;
 
 import org.as3commons.collections.SortedMap;
+import org.strym.amqp.actionscript.connection.IConnection;
 
 public class ConnectionEvent extends Event {
     static public const CONNECTION_STARTED:String = "connectionStarted";
     static public const CONNECTION_TUNED:String = "connectionTuned";
+    static public const CONNECTION_OPENED:String = "connectionOpened";
+
+    private var _connection:IConnection;
 
     private var _arguments:SortedMap;
     private var _data:*;
@@ -25,8 +29,17 @@ public class ConnectionEvent extends Event {
         var result:ConnectionEvent = new ConnectionEvent(type, bubbles, cancelable);
         result.arguments = _arguments;
         result.data = _data;
+        result.connection = _connection;
 
         return result;
+    }
+
+    public function get connection():IConnection {
+        return _connection;
+    }
+
+    public function set connection(value:IConnection):void {
+        _connection = value;
     }
 
     public function get arguments():SortedMap {
