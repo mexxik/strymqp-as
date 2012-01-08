@@ -16,7 +16,6 @@ public class ProtocolDefinition implements IProtocolDefinition {
     public function ProtocolDefinition() {
     }
 
-
     public function getMethod(classId:int, methodId:int):IProtocolMethod {
         var protocolClass:IProtocolClass = _classes.itemFor(classId);
 

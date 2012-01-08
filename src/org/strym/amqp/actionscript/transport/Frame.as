@@ -11,6 +11,7 @@ import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 
 import org.strym.amqp.actionscript.io.IReadWritable;
+import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 
 public class Frame implements IFrame {
     protected var _isComplete:Boolean = false;

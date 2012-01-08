@@ -9,6 +9,7 @@ package org.strym.amqp.actionscript.transport {
 import flash.utils.ByteArray;
 
 import org.strym.amqp.actionscript.io.IReadWritable;
+import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 
 public interface IFrame extends IReadWritable {
     function get isComplete():Boolean;

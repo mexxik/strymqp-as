@@ -14,17 +14,20 @@ import flash.events.ProgressEvent;
 import org.as3commons.collections.Map;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
+import org.strym.amqp.actionscript.di.Injector;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.Protocol;
+import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 import org.strym.amqp.actionscript.transport.v091.Transport091;
 
 public class Transport extends EventDispatcher implements ITransport {
     protected var _connectionParameters:ConnectionParameters;
 
     protected var _delegate:IODelegate;
+    protected var _readWriter:IDomainReaderWriter;
 
     protected var _channels:Map = new Map();
 
@@ -36,6 +39,10 @@ public class Transport extends EventDispatcher implements ITransport {
             default:
                 return new Transport();
         }
+    }
+
+    public function get readWriter():IDomainReaderWriter {
+        return _readWriter;
     }
 
     public function connect(connectionParameters:ConnectionParameters):void {

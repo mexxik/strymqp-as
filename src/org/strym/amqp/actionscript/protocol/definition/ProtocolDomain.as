@@ -11,15 +11,17 @@ import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 
 public class ProtocolDomain implements IProtocolDomain {
+    protected var _readWriter:IDomainReaderWriter;
+
     protected var _name:String;
     protected var _type:String;
-
 
     public function read(data:IDataInput):* {
 
     }
 
     public function write(data:IDataOutput, value:*):void {
+
     }
 
     public function get name():String {

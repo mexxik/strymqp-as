@@ -10,16 +10,16 @@ import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 
+import org.strym.amqp.actionscript.di.Injector;
+
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 
 import org.strym.amqp.actionscript.protocol.definition.ProtocolDomain;
 
 public class ProtocolDomain091 extends ProtocolDomain {
-    private var _readWriter:IDomainReaderWriter = new DomainReadWriter091();
-
     public function ProtocolDomain091() {
+        _readWriter = Injector.getObject("domainReadWriter091");
     }
-
 
     override public function read(data:IDataInput):* {
         var result:*;

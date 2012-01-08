@@ -12,6 +12,8 @@ import org.as3commons.collections.SortedMap;
 import org.strym.amqp.actionscript.io.IReadWritable;
 
 public interface IProtocolMethod extends IReadWritable {
+    function set readWriter(readWriter:IDomainReaderWriter):void;
+
     function get id():int;
     function get name():String;
     function get qualifiedName():String;

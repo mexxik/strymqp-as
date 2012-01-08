@@ -15,6 +15,8 @@ import org.as3commons.collections.SortedMap;
 import org.as3commons.collections.framework.IIterator;
 
 public class ProtocolMethod implements IProtocolMethod {
+    protected var _readWriter:IDomainReaderWriter;
+
     protected var _id:int = 0;
     protected var _name:String;
     protected var _fields:SortedMap = new SortedMap();
@@ -22,6 +24,10 @@ public class ProtocolMethod implements IProtocolMethod {
     protected var _protocolClass:IProtocolClass;
 
     public function ProtocolMethod() {
+    }
+
+    public function set readWriter(readWriter:IDomainReaderWriter):void {
+        _readWriter = readWriter;
     }
 
     public function addField(field:IMethodField):void {
@@ -47,6 +53,7 @@ public class ProtocolMethod implements IProtocolMethod {
         var iterator:IIterator = _fields.iterator();
         while (iterator.hasNext()) {
             var field:IMethodField = iterator.next();
+
             field.read(data);
         }
     }

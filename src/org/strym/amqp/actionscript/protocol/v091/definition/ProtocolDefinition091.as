@@ -9,6 +9,7 @@ package org.strym.amqp.actionscript.protocol.v091.definition {
 import flash.utils.ByteArray;
 
 import org.as3commons.collections.Map;
+import org.strym.amqp.actionscript.di.Injector;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolClass;
 import org.strym.amqp.actionscript.protocol.definition.ProtocolClass;
 
@@ -19,6 +20,8 @@ public class ProtocolDefinition091 extends ProtocolDefinition {
     private var _xmlData:Class;
 
     public function ProtocolDefinition091() {
+        Injector.addObject("domainReadWriter091", new DomainReadWriter091());
+
         var byteArray:ByteArray = new _xmlData();
         var xml:XML = new XML(byteArray.readUTFBytes(byteArray.length));
 

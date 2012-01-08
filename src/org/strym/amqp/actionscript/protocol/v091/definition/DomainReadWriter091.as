@@ -171,8 +171,6 @@ public class DomainReadWriter091 extends DomainReadWriter {
                 byteArray.writeUTFBytes(value);
                 writeLongString(content, byteArray);
             }
-
-
         }
 
         data.writeUnsignedInt(content.length);

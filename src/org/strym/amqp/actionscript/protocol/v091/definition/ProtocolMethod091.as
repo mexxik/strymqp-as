@@ -20,6 +20,8 @@ public class ProtocolMethod091 extends ProtocolMethod {
     }
 
     override public function write(data:IDataOutput):void {
+        super.write(data);
+
         data.writeShort(_protocolClass.id);
         data.writeShort(id);
 
@@ -28,6 +30,7 @@ public class ProtocolMethod091 extends ProtocolMethod {
         var iterator:IIterator = _fields.iterator();
         while (iterator.hasNext()) {
             var field:IMethodField = iterator.next() as IMethodField;
+
             field.write(arguments);
         }
 
