@@ -76,24 +76,6 @@ public class Transport091 extends Transport {
             channel.handleFrame(_currentFrame);
             
             _currentFrame = null;
-
-            /*
-             switch (_currentFrame.type) {
-             // TODO retrieve these constants from the protocol definition
-             case 1:
-             var classId:int = _currentFrame.payload.readShort();
-             var methodId:int = _currentFrame.payload.readShort();
-             var protocolMethod:IProtocolMethod = _connectionParameters.protocol.getMethod(classId, methodId);
-
-             protocolMethod.read(_currentFrame.payload);
-
-             processMethod(protocolMethod);
-
-             break;
-             }
-
-
-             _currentFrame = null;*/
         }
     }
 
@@ -146,72 +128,6 @@ public class Transport091 extends Transport {
         writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
 
         super.channel_connectionTunedHandler(event);
-    }
-
-    private function processMethod(method:IProtocolMethod):void {
-        /*switch (method.qualifiedName) {
-         case "connection.start":
-         // received Connection.Start
-         //connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_STARTED);
-         //connectionEvent.arguments = method.fields;
-
-         //dispatchEvent(connectionEvent);
-
-         // sending back Connection.Start-Ok
-         var startOkFrame:Frame091 = new Frame091();
-         startOkFrame.type = 1;
-         startOkFrame.channel = 0;
-
-         var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
-
-         var clientProperties:SortedMap = new SortedMap();
-         clientProperties.add("product", "StrymQP");
-         clientProperties.add("information", "http://www.strym.org");
-         clientProperties.add("platform", "Flash");
-         clientProperties.add("copyright", "Copyright (C) 2012 Strym");
-         clientProperties.add("version", "0.1.0");
-
-         startOkMethod.setField("client-properties", clientProperties);
-         startOkMethod.setField("mechanism", "PLAIN");
-
-         var responseByteArray:ByteArray = new ByteArray();
-         responseByteArray.writeByte(0);
-         responseByteArray.writeUTFBytes("guest");
-         responseByteArray.writeByte(0);
-         responseByteArray.writeUTFBytes("guest");
-
-         startOkMethod.setField("response", responseByteArray);
-         startOkMethod.setField("locale", "en_US");
-
-
-         writeMethodAndFlush(startOkFrame, startOkMethod);
-
-         break;
-
-         case "connection.tune":
-         _tuneProperties.channelMax = method.getField("channel-max") as int;
-         _tuneProperties.frameMax = method.getField("frame-max") as uint;
-         _tuneProperties.heartbeat = method.getField("heartbeat") as int;
-
-         //connectionEvent = new ConnectionEvent(ConnectionEvent.CONNECTION_TUNED);
-
-         //dispatchEvent(connectionEvent);
-
-         // sending back Connection.Tune-Ok
-         var tuneOkFrame:Frame091 = new Frame091();
-         tuneOkFrame.type = 1;
-         tuneOkFrame.channel = 0;
-
-         var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("tune-ok");
-
-         tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
-         tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
-         tuneOkMethod.setField("heartbeat", _tuneProperties.heartbeat);
-
-         writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
-
-         break;
-         }*/
     }
 
     private function writeMethodAndFlush(frame:IFrame, method:IProtocolMethod):void {

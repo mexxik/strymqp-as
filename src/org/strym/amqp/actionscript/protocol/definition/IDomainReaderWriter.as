@@ -14,21 +14,27 @@ import org.as3commons.collections.SortedMap;
 
 public interface IDomainReaderWriter {
     function readBit(data:IDataInput):Boolean;
-    function writeBit(data:IDataOutput, bit:Boolean):void;
+    function writeBit(data:IDataOutput, value:Boolean):void;
 
     function readOctet(data:IDataInput):uint;
-    function writeOctet(data:IDataOutput, octet:uint):void;
+    function writeOctet(data:IDataOutput, value:uint):void;
+
+    function readShort(data:IDataInput):int;
+    function writeShort(data:IDataOutput, value:int):void;
+
+    function readInt(data:IDataInput):int;
+    function writeInt(data:IDataOutput, value:int):void;
 
     function readShortString(data:IDataInput):String;
-    function writeShortString(data:IDataOutput, string:String):void;
+    function writeShortString(data:IDataOutput, value:String):void;
 
     function readLongString(data:IDataInput):ByteArray;
-    function writeLongString(data:IDataOutput, string:ByteArray):void;
+    function writeLongString(data:IDataOutput, value:ByteArray):void;
 
     function readTimestamp(data:IDataInput):Date;
-    function writeTimestamp(data:IDataOutput, timestamp:Date):void;
+    function writeTimestamp(data:IDataOutput, value:Date):void;
 
     function readTable(data:IDataInput):SortedMap;
-    function writeTable(data:IDataOutput, table:SortedMap):void;
+    function writeTable(data:IDataOutput, value:SortedMap):void;
 }
 }

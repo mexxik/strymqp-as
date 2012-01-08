@@ -20,42 +20,67 @@ public class DomainReadWriter implements IDomainReaderWriter {
         return false;
     }
 
-    public function writeBit(data:IDataOutput, bit:Boolean):void {
+    public function writeBit(data:IDataOutput, value:Boolean):void {
     }
+
+    /*
+     numeric
+     */
 
     public function readOctet(data:IDataInput):uint {
         return 0;
     }
 
-    public function writeOctet(data:IDataOutput, octet:uint):void {
+    public function writeOctet(data:IDataOutput, value:uint):void {
     }
 
-    public function writeShortString(data:IDataOutput, string:String):void {
+    public function readShort(data:IDataInput):int {
+        return 0;
     }
 
+    public function writeShort(data:IDataOutput, value:int):void {
+    }
+
+    public function readInt(data:IDataInput):int {
+        return 0;
+    }
+
+    public function writeInt(data:IDataOutput, value:int):void {
+    }
+
+    /*
+     strings
+     */
     public function readShortString(data:IDataInput):String {
         return "";
+    }
+
+    public function writeShortString(data:IDataOutput, value:String):void {
     }
 
     public function readLongString(data:IDataInput):ByteArray {
         return new ByteArray();
     }
 
-    public function writeLongString(data:IDataOutput, string:ByteArray):void {
-        }
+    public function writeLongString(data:IDataOutput, value:ByteArray):void {
+    }
+
+    /*
+     miscellaneous
+     */
 
     public function readTimestamp(data:IDataInput):Date {
         return new Date();
     }
 
-    public function writeTimestamp(data:IDataOutput, timestamp:Date):void {
+    public function writeTimestamp(data:IDataOutput, value:Date):void {
     }
 
     public function readTable(data:IDataInput):SortedMap {
         return null;
     }
 
-    public function writeTable(data:IDataOutput, table:SortedMap):void {
+    public function writeTable(data:IDataOutput, value:SortedMap):void {
     }
 }
 }

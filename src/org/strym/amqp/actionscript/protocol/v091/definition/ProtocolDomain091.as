@@ -30,11 +30,11 @@ public class ProtocolDomain091 extends ProtocolDomain {
                 break;
             
             case "short":
-                result = data.readShort();
+                result = _readWriter.readShort(data);
                 break;
             
             case "long":
-                result = data.readInt();
+                result = _readWriter.readInt(data);
                 break;
 
             case "table":
@@ -58,21 +58,15 @@ public class ProtocolDomain091 extends ProtocolDomain {
                     break;
                 
                 case "short":
-                    data.writeShort(value);
+                    _readWriter.writeShort(data, value);
                     break;
                 
                 case "long":
-                    data.writeInt(value);
+                    _readWriter.writeInt(data, value);
                     break;
 
                 case "table":
-                    var table:ByteArray = new ByteArray();
-                    _readWriter.writeTable(table, value);
-
-                    //trace(table.toString());
-
-                    //data.writeUnsignedInt(table.length);
-                    data.writeBytes(table);
+                    _readWriter.writeTable(data, value);
                     break;
 
                 case "shortstr":

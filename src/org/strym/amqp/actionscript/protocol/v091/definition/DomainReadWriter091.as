@@ -28,6 +28,10 @@ public class DomainReadWriter091 extends DomainReadWriter {
         super.writeBit(data, bit);
     }
 
+    /*
+     numeric
+     */
+
     override public function readOctet(data:IDataInput):uint {
         return data.readUnsignedByte();
     }
@@ -35,6 +39,26 @@ public class DomainReadWriter091 extends DomainReadWriter {
     override public function writeOctet(data:IDataOutput, octet:uint):void {
         data.writeByte(octet);
     }
+
+    override public function readShort(data:IDataInput):int {
+        return data.readShort();
+    }
+
+    override public function writeShort(data:IDataOutput, value:int):void {
+        data.writeShort(value);
+    }
+
+    override public function readInt(data:IDataInput):int {
+        return data.readInt();
+    }
+
+    override public function writeInt(data:IDataOutput, value:int):void {
+        data.writeInt(value);
+    }
+
+    /*
+     strings
+     */
 
     override public function readShortString(data:IDataInput):String {
         var length:uint = data.readUnsignedByte();
@@ -62,6 +86,10 @@ public class DomainReadWriter091 extends DomainReadWriter {
         data.writeUnsignedInt(string.length);
         data.writeBytes(string, 0, string.length);
     }
+
+    /*
+     miscellaneous
+     */
 
     override public function readTimestamp(data:IDataInput):Date {
         var result:Date = new Date();
@@ -108,7 +136,7 @@ public class DomainReadWriter091 extends DomainReadWriter {
                     case 84:
                         value = readTimestamp(data);
                         break;
-                    
+
                     case 116: // boolean?
                         // TODO implement proper amqp bits handling
                         value = data.readUnsignedByte();
