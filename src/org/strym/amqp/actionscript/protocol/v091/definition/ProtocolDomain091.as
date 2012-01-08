@@ -25,6 +25,10 @@ public class ProtocolDomain091 extends ProtocolDomain {
         var result:*;
 
         switch (_type) {
+            case "bit":
+                result = _readWriter.readBit(data);
+                break;
+
             case "octet":
                 result = _readWriter.readOctet(data);
                 break;
@@ -53,6 +57,10 @@ public class ProtocolDomain091 extends ProtocolDomain {
         //super.write(value);
         if (value != null) {
             switch (_type) {
+                case "bit":
+                    _readWriter.writeBit(data, value);
+                    break;
+                
                 case "octet":
                     _readWriter.writeOctet(data, value);
                     break;

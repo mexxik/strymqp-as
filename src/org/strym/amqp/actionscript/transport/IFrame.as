@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.transport {
 import flash.utils.ByteArray;
+import flash.utils.IDataOutput;
 
 import org.strym.amqp.actionscript.io.IReadWritable;
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
@@ -29,5 +30,7 @@ public interface IFrame extends IReadWritable {
 
     function get payload():ByteArray;
     function set payload(value:ByteArray):void;
+
+    function close(data:IDataOutput):void;
 }
 }

@@ -17,6 +17,6 @@ public interface IProtocol {
     function get version():String;
     
     function getMethod(classId:int, methodId:int):IProtocolMethod;
-    function findMethod(methodName:String):IProtocolMethod;
+    function findMethod(className:String, methodName:String):IProtocolMethod;
 }
 }

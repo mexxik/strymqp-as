@@ -78,5 +78,8 @@ public class Frame implements IFrame {
 
     public function write(data:IDataOutput):void {
     }
+
+    public function close(data:IDataOutput):void {
+    }
 }
 }

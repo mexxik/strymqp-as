@@ -48,6 +48,9 @@ public class ProtocolDefinition091 extends ProtocolDefinition {
                     methodField.name = fieldXML.@name;
                     methodField.domain = _domains.itemFor(fieldXML.@domain.toString());
 
+                    if (!methodField.domain)
+                        methodField.domain = _domains.itemFor(fieldXML.@type.toString());
+
                     protocolMethod.addField(methodField);
                 }
 

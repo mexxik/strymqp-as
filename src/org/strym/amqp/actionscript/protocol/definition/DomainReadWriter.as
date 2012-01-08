@@ -16,6 +16,10 @@ public class DomainReadWriter implements IDomainReaderWriter {
     public function DomainReadWriter() {
     }
 
+    public function flush(data:IDataOutput):void {
+    }
+
+
     public function readBit(data:IDataInput):Boolean {
         return false;
     }

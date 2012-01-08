@@ -25,13 +25,15 @@ public class ProtocolDefinition implements IProtocolDefinition {
         return null;
     }
 
-    public function findMethod(methodName:String):IProtocolMethod {
+    public function findMethod(className:String, methodName:String):IProtocolMethod {
         var iterator:IIterator = _classes.iterator();
         while (iterator.hasNext()) {
             var methodClass:IProtocolClass = iterator.next() as IProtocolClass;
-            var protocolMethod:IProtocolMethod = methodClass.findMethod(methodName);
-            if (protocolMethod)
-                return protocolMethod;
+            if (methodClass.name == className) {
+                var protocolMethod:IProtocolMethod = methodClass.findMethod(methodName);
+                if (protocolMethod)
+                    return protocolMethod;
+            }
         }
         return null;
     }

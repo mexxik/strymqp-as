@@ -14,18 +14,24 @@ import org.as3commons.collections.SortedMap;
 import org.as3commons.collections.framework.IIterator;
 
 import org.strym.amqp.actionscript.protocol.definition.DomainReadWriter;
+import org.strym.amqp.actionscript.protocol.v091.utils.BitAccumulator;
 
 public class DomainReadWriter091 extends DomainReadWriter {
+    private var _bitAccumulator:BitAccumulator = new BitAccumulator();
+
     public function DomainReadWriter091() {
     }
 
+    override public function flush(data:IDataOutput):void {
+        _bitAccumulator.flush(data);
+    }
 
     override public function readBit(data:IDataInput):Boolean {
         return false;
     }
 
     override public function writeBit(data:IDataOutput, bit:Boolean):void {
-        super.writeBit(data, bit);
+        _bitAccumulator.writeBit(data, bit);
     }
 
     /*
@@ -37,6 +43,8 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeOctet(data:IDataOutput, octet:uint):void {
+        _bitAccumulator.flush(data);
+
         data.writeByte(octet);
     }
 
@@ -45,6 +53,8 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeShort(data:IDataOutput, value:int):void {
+        _bitAccumulator.flush(data);
+
         data.writeShort(value);
     }
 
@@ -53,6 +63,8 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeInt(data:IDataOutput, value:int):void {
+        _bitAccumulator.flush(data);
+
         data.writeInt(value);
     }
 
@@ -68,8 +80,14 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeShortString(data:IDataOutput, string:String):void {
-        data.writeByte(string.length);
-        data.writeUTFBytes(string);
+        _bitAccumulator.flush(data);
+
+        if (string == "")
+            data.writeByte(0);
+        else {
+            data.writeByte(string.length);
+            data.writeUTFBytes(string);
+        }
     }
 
     // TODO check if read/write long string is correct
@@ -83,6 +101,8 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeLongString(data:IDataOutput, string:ByteArray):void {
+        _bitAccumulator.flush(data);
+
         data.writeUnsignedInt(string.length);
         data.writeBytes(string, 0, string.length);
     }
@@ -103,6 +123,8 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeTimestamp(data:IDataOutput, timestamp:Date):void {
+        _bitAccumulator.flush(data);
+
         data.writeUnsignedInt(0);
         data.writeUnsignedInt(timestamp.getTime() * 1000);
     }
@@ -153,6 +175,7 @@ public class DomainReadWriter091 extends DomainReadWriter {
     }
 
     override public function writeTable(data:IDataOutput, table:SortedMap):void {
+        _bitAccumulator.flush(data);
         //data.writeByte(70);
 
         var content:ByteArray = new ByteArray();

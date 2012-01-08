@@ -10,13 +10,14 @@ import flash.utils.ByteArray;
 import flash.utils.IDataOutput;
 
 import org.as3commons.collections.framework.IIterator;
+import org.strym.amqp.actionscript.di.Injector;
 import org.strym.amqp.actionscript.protocol.definition.IMethodField;
 
 import org.strym.amqp.actionscript.protocol.definition.ProtocolMethod;
 
 public class ProtocolMethod091 extends ProtocolMethod {
     public function ProtocolMethod091() {
-
+        _readWriter = Injector.getObject("domainReadWriter091");
     }
 
     override public function write(data:IDataOutput):void {
@@ -33,6 +34,8 @@ public class ProtocolMethod091 extends ProtocolMethod {
 
             field.write(arguments);
         }
+
+        _readWriter.flush(arguments);
 
         //data.writeUnsignedInt(arguments.length);
         data.writeBytes(arguments);

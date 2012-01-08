@@ -13,6 +13,8 @@ import flash.utils.IDataOutput;
 import org.as3commons.collections.SortedMap;
 
 public interface IDomainReaderWriter {
+    function flush(data:IDataOutput):void;
+
     function readBit(data:IDataInput):Boolean;
     function writeBit(data:IDataOutput, value:Boolean):void;
 

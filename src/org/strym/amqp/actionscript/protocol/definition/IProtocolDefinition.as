@@ -10,6 +10,6 @@ import org.as3commons.collections.Map;
 
 public interface IProtocolDefinition {
     function getMethod(classId:int, methodId:int):IProtocolMethod;
-    function findMethod(methodName:String):IProtocolMethod;
+    function findMethod(className:String, methodName:String):IProtocolMethod;
 }
 }

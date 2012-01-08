@@ -63,6 +63,8 @@ public class Frame091 extends Frame {
         data.writeByte(206);
     }
 
+    override public function close(data:IDataOutput):void {
 
+    }
 }
 }

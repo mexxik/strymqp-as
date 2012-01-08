@@ -20,6 +20,7 @@ import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
+import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.protocol.v091.definition.DomainReadWriter091;
 import org.strym.amqp.actionscript.transport.IChannel;
 import org.strym.amqp.actionscript.transport.IFrame;
@@ -49,6 +50,16 @@ public class Transport091 extends Transport {
     }
 
     override public function open(host:String):void {
+        var openFrame:IFrame = new Frame091();
+        openFrame.type = 1;
+        openFrame.channel = 0;
+
+        var openMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "open");
+        openMethod.setField("virtual-host", host);
+        openMethod.setField("reserved-1", "");
+        openMethod.setField("reserved-2", false);
+
+        writeMethodAndFlush(openFrame, openMethod);
 
     }
 
@@ -96,7 +107,7 @@ public class Transport091 extends Transport {
         startOkFrame.type = 1;
         startOkFrame.channel = 0;
 
-        var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("start-ok");
+        var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "start-ok");
 
         var clientProperties:SortedMap = new SortedMap();
         clientProperties.add("product", "StrymQP");
@@ -113,6 +124,9 @@ public class Transport091 extends Transport {
         responseByteArray.writeUTFBytes("guest");
         responseByteArray.writeByte(0);
         responseByteArray.writeUTFBytes("guest");
+        /*var credentials:SortedMap = new SortedMap();
+        credentials.add("LOGIN", "guest");
+        credentials.add("PASSWORD", "guest");*/
 
         startOkMethod.setField("response", responseByteArray);
         startOkMethod.setField("locale", "en_US");
@@ -130,7 +144,7 @@ public class Transport091 extends Transport {
         tuneOkFrame.type = 1;
         tuneOkFrame.channel = 0;
 
-        var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("tune-ok");
+        var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "tune-ok");
 
         tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
         tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
