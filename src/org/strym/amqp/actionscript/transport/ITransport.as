@@ -9,12 +9,15 @@ package org.strym.amqp.actionscript.transport {
 import flash.events.IEventDispatcher;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
+import org.strym.amqp.actionscript.exchange.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 
 public interface ITransport extends IEventDispatcher {
     function connect(connectionParameters:ConnectionParameters):void;
     function open(host:String):void;
+
+    function declareExchange(exchange:Exchange):void;
 
     function get connected():Boolean;
 }

@@ -17,6 +17,8 @@ import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.di.Injector;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
+import org.strym.amqp.actionscript.events.ExchangeEvent;
+import org.strym.amqp.actionscript.exchange.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
@@ -32,6 +34,8 @@ import org.strym.amqp.actionscript.utils.DataUtils;
 public class Transport091 extends Transport {
 
     private var _currentFrame:IFrame;
+
+    private var _currentExchange:Exchange;
 
     private var _tuneProperties:TuneProperties = new TuneProperties();
 
@@ -52,7 +56,7 @@ public class Transport091 extends Transport {
 
     override protected function getChannel(id:int):IChannel {
         var result:IChannel = _channels.itemFor(id);
-        
+
         if (!result) {
             result = new Channel091(id, _connectionParameters.protocol);
             addChannel(result);
@@ -72,6 +76,30 @@ public class Transport091 extends Transport {
         openMethod.setField("reserved-2", false);
 
         writeMethodAndFlush(openFrame, openMethod);
+    }
+
+    override public function declareExchange(exchange:Exchange):void {
+        var channel:IChannel = getChannel(1);
+        if (channel) {
+            _currentExchange = exchange;
+
+            var declareFrame:IFrame = new Frame091();
+            declareFrame.type = 1;
+            declareFrame.channel = channel.id;
+
+            var declareMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("exchange", "declare");
+            declareMethod.setField("reserved-1", 0);
+            declareMethod.setField("exchange", exchange.name);
+            declareMethod.setField("type", exchange.type);
+            declareMethod.setField("passive", exchange.passive);
+            declareMethod.setField("durable", exchange.durable);
+            declareMethod.setField("reserved-2", exchange.autoDelete);
+            declareMethod.setField("reserved-3", exchange.internal);
+            declareMethod.setField("no-wait", exchange.nowait);
+            declareMethod.setField("arguments", new SortedMap());
+
+            writeMethodAndFlush(declareFrame, declareMethod);
+        }
     }
 
     override protected function sendHeader():void {
@@ -193,6 +221,13 @@ public class Transport091 extends Transport {
 
     override protected function channel_channelOpenedHandler(event:ChannelEvent):void {
         super.channel_channelOpenedHandler(event);
+    }
+
+
+    override protected function channel_exchangeDeclaredHandler(event:ExchangeEvent):void {
+        event.exchange = _currentExchange;
+
+        super.channel_exchangeDeclaredHandler(event);
     }
 }
 }

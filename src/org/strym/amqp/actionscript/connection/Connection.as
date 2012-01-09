@@ -11,7 +11,11 @@ import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
+import org.strym.amqp.actionscript.events.ChannelEvent;
+
 import org.strym.amqp.actionscript.events.ConnectionEvent;
+import org.strym.amqp.actionscript.events.ExchangeEvent;
+import org.strym.amqp.actionscript.exchange.Exchange;
 
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
@@ -57,11 +61,19 @@ public class Connection extends EventDispatcher implements IConnection {
             _transport.addEventListener(ConnectionEvent.CONNECTION_TUNED, transport_connectionTunedHandler);
             _transport.addEventListener(ConnectionEvent.CONNECTION_OPENED, transport_connectionOpenedHandler);
 
+            _transport.addEventListener(ChannelEvent.CHANNEL_OPENED, transport_channelOpenedHandler);
+
+            _transport.addEventListener(ExchangeEvent.EXCHANGE_DECLARED, transport_exchangeDeclaredHandler);
+
             _transport.connect(_connectionParameters);
         }
         else {
             throw Error("connection parameters are not specified");
         }
+    }
+
+    public function declareExchange(exchange:Exchange):void {
+        _transport.declareExchange(exchange);
     }
 
     public function get connected():Boolean {
@@ -94,6 +106,16 @@ public class Connection extends EventDispatcher implements IConnection {
 
         event.connection = this;
 
+        dispatchEvent(event);
+    }
+
+    protected function transport_channelOpenedHandler(event:ChannelEvent):void {
+        event.connection = this;
+
+        dispatchEvent(event);
+    }
+
+    protected function transport_exchangeDeclaredHandler(event:ExchangeEvent):void {
         dispatchEvent(event);
     }
 }

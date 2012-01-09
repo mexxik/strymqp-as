@@ -17,6 +17,8 @@ import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.di.Injector;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
+import org.strym.amqp.actionscript.events.ExchangeEvent;
+import org.strym.amqp.actionscript.exchange.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
@@ -62,6 +64,9 @@ public class Transport extends EventDispatcher implements ITransport {
     public function open(host:String):void {
     }
 
+    public function declareExchange(exchange:Exchange):void {
+    }
+
     public function get connected():Boolean {
         return _delegate.connected;
     }
@@ -77,6 +82,8 @@ public class Transport extends EventDispatcher implements ITransport {
         channel.addEventListener(ConnectionEvent.CONNECTION_OPENED, channel_connectionOpenedHandler);
 
         channel.addEventListener(ChannelEvent.CHANNEL_OPENED, channel_channelOpenedHandler);
+
+        channel.addEventListener(ExchangeEvent.EXCHANGE_DECLARED, channel_exchangeDeclaredHandler);
     }
 
     protected function getChannel(id:int):IChannel {
@@ -117,6 +124,10 @@ public class Transport extends EventDispatcher implements ITransport {
     }
 
     protected function channel_channelOpenedHandler(event:ChannelEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function channel_exchangeDeclaredHandler(event:ExchangeEvent):void {
         dispatchEvent(event);
     }
 

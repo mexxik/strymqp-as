@@ -9,6 +9,7 @@ package org.strym.amqp.actionscript.transport.v091 {
 import org.as3commons.collections.SortedMap;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
+import org.strym.amqp.actionscript.events.ExchangeEvent;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.transport.Channel;
@@ -39,6 +40,7 @@ public class Channel091 extends Channel {
     private function handlerMethod(method:IProtocolMethod):void {
         var connectionEvent:ConnectionEvent;
         var channelEvent:ChannelEvent;
+        var exchangeEvent:ExchangeEvent;
 
         switch (method.qualifiedName) {
             // connection class
@@ -68,13 +70,25 @@ public class Channel091 extends Channel {
             case "channel.open-ok":
                 channelEvent = new ChannelEvent(ChannelEvent.CHANNEL_OPENED);
                 break;
+
+            // exchange class
+            case "exchange.declare-ok":
+                exchangeEvent = new ExchangeEvent(ExchangeEvent.EXCHANGE_DECLARED);
+                break;
         }
 
         if (connectionEvent)
             dispatchEvent(connectionEvent);
 
-        if (channelEvent)
+        if (channelEvent) {
+            channelEvent.channel = this;
+
             dispatchEvent(channelEvent);
+        }
+
+        if (exchangeEvent)
+            dispatchEvent(exchangeEvent);
+
     }
 
     /*

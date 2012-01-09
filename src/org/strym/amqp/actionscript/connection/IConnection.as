@@ -8,6 +8,8 @@
 package org.strym.amqp.actionscript.connection {
 import flash.events.IEventDispatcher;
 
+import org.strym.amqp.actionscript.exchange.Exchange;
+
 public interface IConnection extends IEventDispatcher {
     function get name():String;
     function set name(value:String):void;
@@ -16,6 +18,8 @@ public interface IConnection extends IEventDispatcher {
     function set connectionParameters(value:ConnectionParameters):void;
 
     function connect():void;
+
+    function declareExchange(exchange:Exchange):void;
 
     function get connected():Boolean;
     function get started():Boolean;
