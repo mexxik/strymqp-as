@@ -128,6 +128,28 @@ public class Transport091 extends Transport {
         }
     }
 
+    override public function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void {
+        var channel:IChannel = getChannel(1);
+        if (channel) {
+            _currentExchange = exchange;
+            _currentQueue = queue;
+
+            var frame:IFrame = new Frame091();
+            frame.type = 1;
+            frame.channel = channel.id;
+
+            var method:IProtocolMethod = _connectionParameters.protocol.findMethod("queue", "bind");
+            method.setField("reserved-1", 0);
+            method.setField("queue", queue.name);
+            method.setField("exchange", exchange.name);
+            method.setField("routing-key", routingKey);
+            method.setField("no-wait", false);
+            method.setField("arguments", new SortedMap());
+
+            writeMethodAndFlush(frame, method);
+        }
+    }
+
     override protected function sendHeader():void {
         _delegate.writeUTFBytes("AMQP");
         _delegate.writeByte(_connectionParameters.protocol.id);
@@ -260,6 +282,14 @@ public class Transport091 extends Transport {
         event.queue = _currentQueue;
 
         super.channel_queueDeclaredHandler(event);
+    }
+
+
+    override protected function channel_queueBoundHandler(event:QueueEvent):void {
+        event.exchange = _currentExchange;
+        event.queue = _currentQueue;
+        
+        super.channel_queueBoundHandler(event);
     }
 }
 }

@@ -68,6 +68,7 @@ public class Connection extends EventDispatcher implements IConnection {
             _transport.addEventListener(ExchangeEvent.EXCHANGE_DECLARED, transport_exchangeDeclaredHandler);
 
             _transport.addEventListener(QueueEvent.QUEUE_CREATED, transport_queueDeclaredHandler);
+            _transport.addEventListener(QueueEvent.QUEUE_BOUND, transport_queueBoundHandler);
 
             _transport.connect(_connectionParameters);
         }
@@ -82,6 +83,10 @@ public class Connection extends EventDispatcher implements IConnection {
 
     public function declareQueue(queue:Queue):void {
         _transport.declareQueue(queue);
+    }
+
+    public function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void {
+        _transport.bindQueue(exchange, queue, routingKey);
     }
 
     public function get connected():Boolean {
@@ -128,6 +133,10 @@ public class Connection extends EventDispatcher implements IConnection {
     }
 
     protected function transport_queueDeclaredHandler(event:QueueEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function transport_queueBoundHandler(event:QueueEvent):void {
         dispatchEvent(event);
     }
 }

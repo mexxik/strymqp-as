@@ -72,6 +72,9 @@ public class Transport extends EventDispatcher implements ITransport {
     public function declareQueue(queue:Queue):void {
     }
 
+    public function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void {
+    }
+
     public function get connected():Boolean {
         return _delegate.connected;
     }
@@ -91,6 +94,7 @@ public class Transport extends EventDispatcher implements ITransport {
         channel.addEventListener(ExchangeEvent.EXCHANGE_DECLARED, channel_exchangeDeclaredHandler);
 
         channel.addEventListener(QueueEvent.QUEUE_CREATED, channel_queueDeclaredHandler);
+        channel.addEventListener(QueueEvent.QUEUE_BOUND, channel_queueBoundHandler);
     }
 
     protected function getChannel(id:int):IChannel {
@@ -139,6 +143,10 @@ public class Transport extends EventDispatcher implements ITransport {
     }
 
     protected function channel_queueDeclaredHandler(event:QueueEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function channel_queueBoundHandler(event:QueueEvent):void {
         dispatchEvent(event);
     }
 

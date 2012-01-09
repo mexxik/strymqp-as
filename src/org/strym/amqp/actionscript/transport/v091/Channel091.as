@@ -76,11 +76,17 @@ public class Channel091 extends Channel {
             // exchange class
             case "exchange.declare-ok":
                 exchangeEvent = new ExchangeEvent(ExchangeEvent.EXCHANGE_DECLARED);
+
                 break;
 
             // queue class
             case "queue.declare-ok":
                 queueEvent = new QueueEvent(QueueEvent.QUEUE_CREATED);
+
+                break;
+
+            case "queue.bind-ok":
+                queueEvent = new QueueEvent(QueueEvent.QUEUE_BOUND);
 
                 break;
         }

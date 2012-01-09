@@ -22,6 +22,7 @@ public interface IConnection extends IEventDispatcher {
 
     function declareExchange(exchange:Exchange):void;
     function declareQueue(queue:Queue):void;
+    function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void;
 
     function get connected():Boolean;
     function get started():Boolean;
