@@ -18,6 +18,7 @@ import org.strym.amqp.actionscript.di.Injector;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.events.ExchangeEvent;
+import org.strym.amqp.actionscript.events.QueueEvent;
 import org.strym.amqp.actionscript.exchange.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
@@ -25,6 +26,7 @@ import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.protocol.v091.definition.DomainReadWriter091;
+import org.strym.amqp.actionscript.queue.Queue;
 import org.strym.amqp.actionscript.transport.IChannel;
 import org.strym.amqp.actionscript.transport.IFrame;
 import org.strym.amqp.actionscript.transport.Transport;
@@ -36,6 +38,7 @@ public class Transport091 extends Transport {
     private var _currentFrame:IFrame;
 
     private var _currentExchange:Exchange;
+    private var _currentQueue:Queue;
 
     private var _tuneProperties:TuneProperties = new TuneProperties();
 
@@ -83,22 +86,45 @@ public class Transport091 extends Transport {
         if (channel) {
             _currentExchange = exchange;
 
-            var declareFrame:IFrame = new Frame091();
-            declareFrame.type = 1;
-            declareFrame.channel = channel.id;
+            var frame:IFrame = new Frame091();
+            frame.type = 1;
+            frame.channel = channel.id;
 
-            var declareMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("exchange", "declare");
-            declareMethod.setField("reserved-1", 0);
-            declareMethod.setField("exchange", exchange.name);
-            declareMethod.setField("type", exchange.type);
-            declareMethod.setField("passive", exchange.passive);
-            declareMethod.setField("durable", exchange.durable);
-            declareMethod.setField("reserved-2", exchange.autoDelete);
-            declareMethod.setField("reserved-3", exchange.internal);
-            declareMethod.setField("no-wait", exchange.nowait);
-            declareMethod.setField("arguments", new SortedMap());
+            var method:IProtocolMethod = _connectionParameters.protocol.findMethod("exchange", "declare");
+            method.setField("reserved-1", 0);
+            method.setField("exchange", exchange.name);
+            method.setField("type", exchange.type);
+            method.setField("passive", exchange.passive);
+            method.setField("durable", exchange.durable);
+            method.setField("reserved-2", exchange.autoDelete);
+            method.setField("reserved-3", exchange.internal);
+            method.setField("no-wait", exchange.nowait);
+            method.setField("arguments", new SortedMap());
 
-            writeMethodAndFlush(declareFrame, declareMethod);
+            writeMethodAndFlush(frame, method);
+        }
+    }
+
+    override public function declareQueue(queue:Queue):void {
+        var channel:IChannel = getChannel(1);
+        if (channel) {
+            _currentQueue = queue;
+
+            var frame:IFrame = new Frame091();
+            frame.type = 1;
+            frame.channel = channel.id;
+
+            var method:IProtocolMethod = _connectionParameters.protocol.findMethod("queue", "declare");
+            method.setField("reserved-1", 0);
+            method.setField("queue", queue.name);
+            method.setField("passive", queue.passive);
+            method.setField("durable", queue.durable);
+            method.setField("exclusive", queue.exclusive);
+            method.setField("auto-delete", queue.autoDelete);
+            method.setField("no-wait", queue.nowait);
+            method.setField("arguments", new SortedMap());
+
+            writeMethodAndFlush(frame, method);
         }
     }
 
@@ -228,6 +254,12 @@ public class Transport091 extends Transport {
         event.exchange = _currentExchange;
 
         super.channel_exchangeDeclaredHandler(event);
+    }
+
+    override protected function channel_queueDeclaredHandler(event:QueueEvent):void {
+        event.queue = _currentQueue;
+
+        super.channel_queueDeclaredHandler(event);
     }
 }
 }

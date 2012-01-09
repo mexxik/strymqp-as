@@ -18,6 +18,7 @@ import org.strym.amqp.actionscript.connection.IConnection;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.queue.Queue;
 
 public class BasicTest {
     private var _delayTimer:Timer;
@@ -87,6 +88,8 @@ public class BasicTest {
      */
     protected function connection_channelOpenedHandler(event:ChannelEvent):void {
         _producerConnection.declareExchange(new Exchange("develop_exchange2", Exchange.DIRECT));
+        _producerConnection.declareQueue(new Queue("develop_queue"));
+
     }
 
     /*

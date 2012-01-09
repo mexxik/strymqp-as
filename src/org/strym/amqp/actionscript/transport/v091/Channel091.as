@@ -10,6 +10,7 @@ import org.as3commons.collections.SortedMap;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.events.ExchangeEvent;
+import org.strym.amqp.actionscript.events.QueueEvent;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.transport.Channel;
@@ -41,6 +42,7 @@ public class Channel091 extends Channel {
         var connectionEvent:ConnectionEvent;
         var channelEvent:ChannelEvent;
         var exchangeEvent:ExchangeEvent;
+        var queueEvent:QueueEvent;
 
         switch (method.qualifiedName) {
             // connection class
@@ -75,6 +77,12 @@ public class Channel091 extends Channel {
             case "exchange.declare-ok":
                 exchangeEvent = new ExchangeEvent(ExchangeEvent.EXCHANGE_DECLARED);
                 break;
+
+            // queue class
+            case "queue.declare-ok":
+                queueEvent = new QueueEvent(QueueEvent.QUEUE_CREATED);
+
+                break;
         }
 
         if (connectionEvent)
@@ -88,6 +96,9 @@ public class Channel091 extends Channel {
 
         if (exchangeEvent)
             dispatchEvent(exchangeEvent);
+
+        if (queueEvent)
+            dispatchEvent(queueEvent);
 
     }
 
