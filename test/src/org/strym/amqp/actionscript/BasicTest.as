@@ -9,6 +9,8 @@ package org.strym.amqp.actionscript {
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import org.flexunit.asserts.assertEquals;
+
 import org.flexunit.asserts.assertTrue;
 
 import org.flexunit.async.Async;
@@ -19,12 +21,14 @@ import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.domain.Exchange;
 import org.strym.amqp.actionscript.domain.Queue;
+import org.strym.amqp.actionscript.events.MessageEvent;
 
 public class BasicTest {
     private var _delayTimer:Timer;
 
     private var _exchange:Exchange = new Exchange("develop.exchange2", Exchange.DIRECT);
     private var _queue:Queue = new Queue("develop.queue");
+    private var _testMessage:String = "Hello, World!";
 
     private var _producerConnectionParameters:ConnectionParameters;
     private var _producerConnectionFactory:ConnectionFactory;
@@ -59,9 +63,10 @@ public class BasicTest {
 
         _consumerConnectionFactory = new ConnectionFactory(_consumerConnectionParameters);
         _consumerConnection = _consumerConnectionFactory.connection;
-        _producerConnection.name = "consumer";
+        _consumerConnection.name = "consumer";
 
-        _producerConnection.addEventListener(ChannelEvent.CHANNEL_OPENED, onConsumerOpened);
+        _consumerConnection.addEventListener(ChannelEvent.CHANNEL_OPENED, onConsumerOpened);
+        _consumerConnection.addEventListener(MessageEvent.MESSAGE_RECEIVED, onMessageReceived);
 
         _consumerConnection.connect();
     }
@@ -98,17 +103,16 @@ public class BasicTest {
         _producerConnection.declareQueue(_queue);
         _producerConnection.bindQueue(_exchange, _queue, "routing.key");
 
-        _producerConnection.convertAndSend("Hello, World!", _exchange, "routing.key");
+        _producerConnection.convertAndSend(_testMessage, _exchange, "routing.key");
 
     }
 
     protected function onConsumerOpened(event:ChannelEvent):void {
         _consumerConnection.consume(_queue);
     }
-
-    /*
-     functional methods
-     */
-
+    
+    protected function onMessageReceived(event:MessageEvent):void {
+        assertEquals(_testMessage, event.message.body);
+    }
 }
 }
