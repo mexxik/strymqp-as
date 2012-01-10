@@ -13,10 +13,10 @@ import flash.utils.IDataOutput;
 import org.strym.amqp.actionscript.io.IReadWritable;
 import org.strym.amqp.actionscript.transport.Frame;
 
-public class Frame091 extends Frame {
+public class MethodFrame091 extends Frame {
 
 
-    public function Frame091() {
+    public function MethodFrame091() {
     }
 
     override public function read(data:IDataInput):void {

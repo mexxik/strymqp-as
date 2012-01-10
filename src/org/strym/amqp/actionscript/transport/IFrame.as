@@ -15,23 +15,15 @@ import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 // TODO: are setters really required here?
 public interface IFrame extends IReadWritable {
     function get isComplete():Boolean;
-    function set isComplete(value:Boolean):void;
 
     function get isHeaderComplete():Boolean;
-    function set isHeaderComplete(value:Boolean):void;
 
     function get type():uint;
-    function set type(value:uint):void;
 
     function get channel():int;
-    function set channel(value:int):void;
 
     function get payloadSize():int;
-    function set payloadSize(value:int):void;
 
     function get payload():ByteArray;
-    function set payload(value:ByteArray):void;
-
-    function close(data:IDataOutput):void;
 }
 }

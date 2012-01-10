@@ -87,12 +87,14 @@ public class BasicTest {
      handlers
      */
     protected function connection_channelOpenedHandler(event:ChannelEvent):void {
-        var exchange:Exchange = new Exchange("develop_exchange2", Exchange.DIRECT);
-        var queue:Queue = new Queue("develop_queue");
+        var exchange:Exchange = new Exchange("develop.exchange2", Exchange.DIRECT);
+        var queue:Queue = new Queue("develop.queue");
 
         _producerConnection.declareExchange(exchange);
         _producerConnection.declareQueue(queue);
         _producerConnection.bindQueue(exchange, queue, "routing.key");
+
+        _producerConnection.convertAndSend("Hello, World!", "routing.key");
 
     }
 

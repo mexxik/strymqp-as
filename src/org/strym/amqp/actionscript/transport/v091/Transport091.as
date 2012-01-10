@@ -9,6 +9,7 @@ package org.strym.amqp.actionscript.transport.v091 {
 import flash.events.Event;
 import flash.events.ProgressEvent;
 import flash.utils.ByteArray;
+import flash.utils.IDataInput;
 
 import org.as3commons.collections.Map;
 import org.as3commons.collections.SortedMap;
@@ -69,16 +70,18 @@ public class Transport091 extends Transport {
     }
 
     override public function open(host:String):void {
-        var openFrame:IFrame = new Frame091();
-        openFrame.type = 1;
-        openFrame.channel = 0;
+        var frame:MethodFrame091 = new MethodFrame091();
+        frame.type = 1;
+        frame.channel = 0;
 
-        var openMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "open");
-        openMethod.setField("virtual-host", host);
-        openMethod.setField("reserved-1", "");
-        openMethod.setField("reserved-2", false);
+        var method:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "open");
+        method.setField("virtual-host", host);
+        method.setField("reserved-1", "");
+        method.setField("reserved-2", false);
 
-        writeMethodAndFlush(openFrame, openMethod);
+        method.write(frame.payload);
+
+        flushFrame(frame);
     }
 
     override public function declareExchange(exchange:Exchange):void {
@@ -86,7 +89,7 @@ public class Transport091 extends Transport {
         if (channel) {
             _currentExchange = exchange;
 
-            var frame:IFrame = new Frame091();
+            var frame:MethodFrame091 = new MethodFrame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -101,7 +104,9 @@ public class Transport091 extends Transport {
             method.setField("no-wait", exchange.nowait);
             method.setField("arguments", new SortedMap());
 
-            writeMethodAndFlush(frame, method);
+            method.write(frame.payload);
+
+            flushFrame(frame);
         }
     }
 
@@ -110,7 +115,7 @@ public class Transport091 extends Transport {
         if (channel) {
             _currentQueue = queue;
 
-            var frame:IFrame = new Frame091();
+            var frame:MethodFrame091 = new MethodFrame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -124,7 +129,9 @@ public class Transport091 extends Transport {
             method.setField("no-wait", queue.nowait);
             method.setField("arguments", new SortedMap());
 
-            writeMethodAndFlush(frame, method);
+            method.write(frame.payload);
+
+            flushFrame(frame);
         }
     }
 
@@ -134,7 +141,7 @@ public class Transport091 extends Transport {
             _currentExchange = exchange;
             _currentQueue = queue;
 
-            var frame:IFrame = new Frame091();
+            var frame:MethodFrame091 = new MethodFrame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -146,7 +153,38 @@ public class Transport091 extends Transport {
             method.setField("no-wait", false);
             method.setField("arguments", new SortedMap());
 
-            writeMethodAndFlush(frame, method);
+            method.write(frame.payload);
+
+            flushFrame(frame);
+        }
+    }
+
+    override public function publish(data:IDataInput, routingKey:String):void {
+
+    }
+
+    override public function consume(queue:Queue):void {
+        var channel:IChannel = getChannel(1);
+        if (channel) {
+            _currentQueue = queue;
+
+            var frame:MethodFrame091 = new MethodFrame091();
+            frame.type = 1;
+            frame.channel = channel.id;
+
+            var method:IProtocolMethod = _connectionParameters.protocol.findMethod("basic", "consume");
+            method.setField("reserved-1", 0);
+            method.setField("queue", queue.name);
+            method.setField("consumer-tag", "");
+            method.setField("no-local", false);
+            method.setField("no-ack", false);
+            method.setField("exclusive", false);
+            method.setField("no-wait", false);
+            method.setField("arguments", new SortedMap());
+
+            method.write(frame.payload);
+
+            flushFrame(frame);
         }
     }
 
@@ -173,7 +211,7 @@ public class Transport091 extends Transport {
     override protected function delegate_dataHandler(event:ProgressEvent):void {
         if (_delegate.bytesAvailable > 0) {
             if (!_currentFrame)
-                _currentFrame = new Frame091();
+                _currentFrame = new MethodFrame091();
 
             if (!_currentFrame.isComplete) {
                 _currentFrame.read(_delegate);
@@ -188,9 +226,7 @@ public class Transport091 extends Transport {
         }
     }
 
-    private function writeMethodAndFlush(frame:IFrame, method:IProtocolMethod):void {
-        method.write(frame.payload);
-
+    private function flushFrame(frame:IFrame):void {
         var byteArray:ByteArray = new ByteArray();
         frame.write(byteArray);
 
@@ -202,11 +238,11 @@ public class Transport091 extends Transport {
      overridden handlers
      */
     override protected function channel_connectionStartedHandler(event:ConnectionEvent):void {
-        var startOkFrame:Frame091 = new Frame091();
-        startOkFrame.type = 1;
-        startOkFrame.channel = 0;
+        var frame:MethodFrame091 = new MethodFrame091();
+        frame.type = 1;
+        frame.channel = 0;
 
-        var startOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "start-ok");
+        var method:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "start-ok");
 
         var clientProperties:SortedMap = new SortedMap();
         clientProperties.add("product", "StrymQP");
@@ -215,8 +251,8 @@ public class Transport091 extends Transport {
         clientProperties.add("copyright", "Copyright (C) 2012 Strym");
         clientProperties.add("version", "0.1.0");
 
-        startOkMethod.setField("client-properties", clientProperties);
-        startOkMethod.setField("mechanism", "PLAIN");
+        method.setField("client-properties", clientProperties);
+        method.setField("mechanism", "PLAIN");
 
         var responseByteArray:ByteArray = new ByteArray();
         responseByteArray.writeByte(0);
@@ -227,10 +263,12 @@ public class Transport091 extends Transport {
          credentials.add("LOGIN", "guest");
          credentials.add("PASSWORD", "guest");*/
 
-        startOkMethod.setField("response", responseByteArray);
-        startOkMethod.setField("locale", "en_US");
+        method.setField("response", responseByteArray);
+        method.setField("locale", "en_US");
 
-        writeMethodAndFlush(startOkFrame, startOkMethod);
+        method.write(frame.payload);
+
+        flushFrame(frame);
 
 
         super.channel_connectionStartedHandler(event);
@@ -239,30 +277,34 @@ public class Transport091 extends Transport {
     override protected function channel_connectionTunedHandler(event:ConnectionEvent):void {
         _tuneProperties = event.data;
 
-        var tuneOkFrame:Frame091 = new Frame091();
-        tuneOkFrame.type = 1;
-        tuneOkFrame.channel = 0;
+        var frame:MethodFrame091 = new MethodFrame091();
+        frame.type = 1;
+        frame.channel = 0;
 
-        var tuneOkMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "tune-ok");
+        var method:IProtocolMethod = _connectionParameters.protocol.findMethod("connection", "tune-ok");
 
-        tuneOkMethod.setField("channel-max", _tuneProperties.channelMax);
-        tuneOkMethod.setField("frame-max", _tuneProperties.frameMax);
-        tuneOkMethod.setField("heartbeat", _tuneProperties.heartbeat);
+        method.setField("channel-max", _tuneProperties.channelMax);
+        method.setField("frame-max", _tuneProperties.frameMax);
+        method.setField("heartbeat", _tuneProperties.heartbeat);
 
-        writeMethodAndFlush(tuneOkFrame, tuneOkMethod);
+        method.write(frame.payload);
+
+        flushFrame(frame);
 
         super.channel_connectionTunedHandler(event);
     }
 
     override protected function channel_connectionOpenedHandler(event:ConnectionEvent):void {
-        var openChannelFrame:Frame091 = new Frame091();
-        openChannelFrame.type = 1;
-        openChannelFrame.channel = 1;
+        var frame:MethodFrame091 = new MethodFrame091();
+        frame.type = 1;
+        frame.channel = 1;
 
-        var openChannelMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("channel", "open");
-        openChannelMethod.setField("reserved-1", 0);
+        var method:IProtocolMethod = _connectionParameters.protocol.findMethod("channel", "open");
+        method.setField("reserved-1", 0);
 
-        writeMethodAndFlush(openChannelFrame, openChannelMethod);
+        method.write(frame.payload);
+
+        flushFrame(frame);
 
         super.channel_connectionOpenedHandler(event);
     }
@@ -288,7 +330,7 @@ public class Transport091 extends Transport {
     override protected function channel_queueBoundHandler(event:QueueEvent):void {
         event.exchange = _currentExchange;
         event.queue = _currentQueue;
-        
+
         super.channel_queueBoundHandler(event);
     }
 }

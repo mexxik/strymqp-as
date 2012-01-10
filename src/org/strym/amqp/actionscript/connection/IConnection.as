@@ -8,6 +8,8 @@
 package org.strym.amqp.actionscript.connection {
 import flash.events.IEventDispatcher;
 
+import org.strym.amqp.actionscript.converters.IMessageConverter;
+
 import org.strym.amqp.actionscript.exchange.Exchange;
 import org.strym.amqp.actionscript.queue.Queue;
 
@@ -24,8 +26,15 @@ public interface IConnection extends IEventDispatcher {
     function declareQueue(queue:Queue):void;
     function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void;
 
+    function convertAndSend(object:*, routingKey:String):void;
+
+    function consume(queue:Queue):void;
+
     function get connected():Boolean;
     function get started():Boolean;
     function get tuned():Boolean;
+
+    function get messageConverter():IMessageConverter;
+    function set messageConverter(value:IMessageConverter):void;
 }
 }

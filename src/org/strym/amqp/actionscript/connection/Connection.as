@@ -11,6 +11,8 @@ import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
+import org.strym.amqp.actionscript.converters.IMessageConverter;
+
 import org.strym.amqp.actionscript.events.ChannelEvent;
 
 import org.strym.amqp.actionscript.events.ConnectionEvent;
@@ -30,6 +32,8 @@ public class Connection extends EventDispatcher implements IConnection {
     protected var _connectionParameters:ConnectionParameters;
 
     protected var _transport:ITransport;
+
+    private var _messageConverter:IMessageConverter;
 
     protected var _started:Boolean = false;
     protected var _tuned:Boolean = false;
@@ -89,6 +93,14 @@ public class Connection extends EventDispatcher implements IConnection {
         _transport.bindQueue(exchange, queue, routingKey);
     }
 
+    public function convertAndSend(object:*, routingKey:String):void {
+        _transport.publish(_messageConverter.serialize(object), routingKey);
+    }
+
+    public function consume(queue:Queue):void {
+        _transport.consume(queue);
+    }
+
     public function get connected():Boolean {
         return _transport ? _transport.connected : false;
     }
@@ -99,6 +111,14 @@ public class Connection extends EventDispatcher implements IConnection {
 
     public function get tuned():Boolean {
         return _tuned;
+    }
+
+    public function get messageConverter():IMessageConverter {
+        return _messageConverter;
+    }
+
+    public function set messageConverter(value:IMessageConverter):void {
+        _messageConverter = value;
     }
 
     /**

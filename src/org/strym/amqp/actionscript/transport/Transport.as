@@ -10,6 +10,7 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
+import flash.utils.IDataInput;
 
 import org.as3commons.collections.Map;
 
@@ -73,6 +74,12 @@ public class Transport extends EventDispatcher implements ITransport {
     }
 
     public function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void {
+    }
+
+    public function publish(data:IDataInput, routingKey:String):void {
+    }
+
+    public function consume(queue:Queue):void {
     }
 
     public function get connected():Boolean {

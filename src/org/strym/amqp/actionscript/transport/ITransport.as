@@ -7,6 +7,7 @@
  */
 package org.strym.amqp.actionscript.transport {
 import flash.events.IEventDispatcher;
+import flash.utils.IDataInput;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.exchange.Exchange;
@@ -21,6 +22,10 @@ public interface ITransport extends IEventDispatcher {
     function declareExchange(exchange:Exchange):void;
     function declareQueue(queue:Queue):void;
     function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void;
+
+    function publish(data:IDataInput, routingKey:String):void;
+
+    function consume(queue:Queue):void;
 
     function get connected():Boolean;
 }
