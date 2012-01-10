@@ -192,7 +192,7 @@ public class Transport091 extends Transport {
             headerFrame.payload.writeUnsignedInt(0);
             headerFrame.payload.writeUnsignedInt((data as ByteArray).length);
             //TODO: ? write property flags when required
-            headerFrame.payload.writeUnsignedInt(0);
+            headerFrame.payload.writeShort(0);
 
             flushFrame(headerFrame);
 

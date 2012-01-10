@@ -23,6 +23,9 @@ import org.strym.amqp.actionscript.queue.Queue;
 public class BasicTest {
     private var _delayTimer:Timer;
 
+    private var _exchange:Exchange = new Exchange("develop.exchange2", Exchange.DIRECT);
+    private var _queue:Queue = new Queue("develop.queue");
+
     private var _producerConnectionParameters:ConnectionParameters;
     private var _producerConnectionFactory:ConnectionFactory;
     private var _producerConnection:IConnection;
@@ -31,10 +34,13 @@ public class BasicTest {
     private var _consumerConnectionFactory:ConnectionFactory;
     private var _consumerConnection:IConnection;
 
-    [Before]
-    public function setUp():void {
+    public function BasicTest() {
         _delayTimer = new Timer(100, 1);
 
+    }
+
+    [Before]
+    public function setUp():void {
         // producer set up
         _producerConnectionParameters = new ConnectionParameters();
         _producerConnectionParameters.host = "localhost";
@@ -43,21 +49,21 @@ public class BasicTest {
         _producerConnection = _producerConnectionFactory.connection;
         _producerConnection.name = "producer";
 
-        _producerConnection.addEventListener(ChannelEvent.CHANNEL_OPENED, connection_channelOpenedHandler);
+        _producerConnection.addEventListener(ChannelEvent.CHANNEL_OPENED, onProducerOpened);
 
         _producerConnection.connect();
 
-        /* consumer set up
-         _consumerConnectionParameters = new ConnectionParameters();
-         _consumerConnectionParameters.host = "localhost";
+        //consumer set up
+        _consumerConnectionParameters = new ConnectionParameters();
+        _consumerConnectionParameters.host = "localhost";
 
-         _consumerConnectionFactory = new ConnectionFactory(_consumerConnectionParameters);
-         _consumerConnection = _consumerConnectionFactory.connection;
-         _producerConnection.name = "consumer";
+        _consumerConnectionFactory = new ConnectionFactory(_consumerConnectionParameters);
+        _consumerConnection = _consumerConnectionFactory.connection;
+        _producerConnection.name = "consumer";
 
-         _producerConnection.addEventListener(ConnectionEvent.CONNECTION_OPENED, connection_openedHandler);
+        _producerConnection.addEventListener(ChannelEvent.CHANNEL_OPENED, onConsumerOpened);
 
-         _consumerConnection.connect();*/
+        _consumerConnection.connect();
     }
 
     [After]
@@ -71,8 +77,9 @@ public class BasicTest {
      */
     [Test(async)]
     public function testAsync():void {
-        var asyncHandler:Function = Async.asyncHandler(this, timerCompleteHandler, 5000, null, timeoutHandler);
+        var asyncHandler:Function = Async.asyncHandler(this, timerCompleteHandler, 10000, null, timeoutHandler);
         _delayTimer.addEventListener(TimerEvent.TIMER_COMPLETE, asyncHandler, false, 0, true);
+
         _delayTimer.start();
     }
 
@@ -86,16 +93,17 @@ public class BasicTest {
     /*
      handlers
      */
-    protected function connection_channelOpenedHandler(event:ChannelEvent):void {
-        var exchange:Exchange = new Exchange("develop.exchange2", Exchange.DIRECT);
-        var queue:Queue = new Queue("develop.queue");
+    protected function onProducerOpened(event:ChannelEvent):void {
+        _producerConnection.declareExchange(_exchange);
+        _producerConnection.declareQueue(_queue);
+        _producerConnection.bindQueue(_exchange, _queue, "routing.key");
 
-        _producerConnection.declareExchange(exchange);
-        _producerConnection.declareQueue(queue);
-        _producerConnection.bindQueue(exchange, queue, "routing.key");
+        _producerConnection.convertAndSend("Hello, World!", _exchange, "routing.key");
 
-        _producerConnection.convertAndSend("Hello, World!", exchange, "routing.key");
+    }
 
+    protected function onConsumerOpened(event:ChannelEvent):void {
+        _consumerConnection.consume(_queue);
     }
 
     /*
