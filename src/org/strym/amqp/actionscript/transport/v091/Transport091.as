@@ -32,6 +32,7 @@ import org.strym.amqp.actionscript.transport.IChannel;
 import org.strym.amqp.actionscript.transport.IFrame;
 import org.strym.amqp.actionscript.transport.Transport;
 import org.strym.amqp.actionscript.transport.TuneProperties;
+import org.strym.amqp.actionscript.transport.v091.Frame091;
 import org.strym.amqp.actionscript.utils.DataUtils;
 
 public class Transport091 extends Transport {
@@ -70,7 +71,7 @@ public class Transport091 extends Transport {
     }
 
     override public function open(host:String):void {
-        var frame:MethodFrame091 = new MethodFrame091();
+        var frame:Frame091 = new Frame091();
         frame.type = 1;
         frame.channel = 0;
 
@@ -89,7 +90,7 @@ public class Transport091 extends Transport {
         if (channel) {
             _currentExchange = exchange;
 
-            var frame:MethodFrame091 = new MethodFrame091();
+            var frame:Frame091 = new Frame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -115,7 +116,7 @@ public class Transport091 extends Transport {
         if (channel) {
             _currentQueue = queue;
 
-            var frame:MethodFrame091 = new MethodFrame091();
+            var frame:Frame091 = new Frame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -141,7 +142,7 @@ public class Transport091 extends Transport {
             _currentExchange = exchange;
             _currentQueue = queue;
 
-            var frame:MethodFrame091 = new MethodFrame091();
+            var frame:Frame091 = new Frame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -159,8 +160,51 @@ public class Transport091 extends Transport {
         }
     }
 
-    override public function publish(data:IDataInput, routingKey:String):void {
+    override public function publish(data:IDataInput, exchange:Exchange, routingKey:String):void {
+        var channel:IChannel = getChannel(1);
+        if (channel) {
+            _currentExchange = exchange;
 
+            // basic.publish
+            var publishFrame:Frame091 = new Frame091();
+            publishFrame.type = 1;
+            publishFrame.channel = channel.id;
+
+            var publishMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("basic", "publish");
+            publishMethod.setField("reserved-1", 0);
+            publishMethod.setField("exchange", exchange.name);
+            publishMethod.setField("routing-key", routingKey);
+            publishMethod.setField("mandatory", false);
+            publishMethod.setField("immediate", false);
+            
+            publishMethod.write(publishFrame.payload);
+
+            flushFrame(publishFrame);
+
+            // content-header
+            var headerFrame:Frame091 = new Frame091();
+            headerFrame.type = 2;
+            headerFrame.channel = channel.id;
+
+            headerFrame.payload.writeShort(publishMethod.protocolClass.id);
+            headerFrame.payload.writeShort(0);
+            //TODO: need long long (64 bit) writing here
+            headerFrame.payload.writeUnsignedInt(0);
+            headerFrame.payload.writeUnsignedInt((data as ByteArray).length);
+            //TODO: ? write property flags when required
+            headerFrame.payload.writeUnsignedInt(0);
+
+            flushFrame(headerFrame);
+
+            // content-body
+            var bodyFrame:Frame091 = new Frame091();
+            bodyFrame.type = 3;
+            bodyFrame.channel = channel.id;
+
+            bodyFrame.payload.writeBytes(data as ByteArray);
+
+            flushFrame(bodyFrame);
+        }
     }
 
     override public function consume(queue:Queue):void {
@@ -168,7 +212,7 @@ public class Transport091 extends Transport {
         if (channel) {
             _currentQueue = queue;
 
-            var frame:MethodFrame091 = new MethodFrame091();
+            var frame:Frame091 = new Frame091();
             frame.type = 1;
             frame.channel = channel.id;
 
@@ -211,7 +255,7 @@ public class Transport091 extends Transport {
     override protected function delegate_dataHandler(event:ProgressEvent):void {
         if (_delegate.bytesAvailable > 0) {
             if (!_currentFrame)
-                _currentFrame = new MethodFrame091();
+                _currentFrame = new Frame091();
 
             if (!_currentFrame.isComplete) {
                 _currentFrame.read(_delegate);
@@ -238,7 +282,7 @@ public class Transport091 extends Transport {
      overridden handlers
      */
     override protected function channel_connectionStartedHandler(event:ConnectionEvent):void {
-        var frame:MethodFrame091 = new MethodFrame091();
+        var frame:Frame091 = new Frame091();
         frame.type = 1;
         frame.channel = 0;
 
@@ -277,7 +321,7 @@ public class Transport091 extends Transport {
     override protected function channel_connectionTunedHandler(event:ConnectionEvent):void {
         _tuneProperties = event.data;
 
-        var frame:MethodFrame091 = new MethodFrame091();
+        var frame:Frame091 = new Frame091();
         frame.type = 1;
         frame.channel = 0;
 
@@ -295,7 +339,7 @@ public class Transport091 extends Transport {
     }
 
     override protected function channel_connectionOpenedHandler(event:ConnectionEvent):void {
-        var frame:MethodFrame091 = new MethodFrame091();
+        var frame:Frame091 = new Frame091();
         frame.type = 1;
         frame.channel = 1;
 

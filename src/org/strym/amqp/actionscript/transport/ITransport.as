@@ -23,7 +23,7 @@ public interface ITransport extends IEventDispatcher {
     function declareQueue(queue:Queue):void;
     function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void;
 
-    function publish(data:IDataInput, routingKey:String):void;
+    function publish(data:IDataInput, exchange:Exchange, routingKey:String):void;
 
     function consume(queue:Queue):void;
 

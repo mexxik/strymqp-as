@@ -93,8 +93,8 @@ public class Connection extends EventDispatcher implements IConnection {
         _transport.bindQueue(exchange, queue, routingKey);
     }
 
-    public function convertAndSend(object:*, routingKey:String):void {
-        _transport.publish(_messageConverter.serialize(object), routingKey);
+    public function convertAndSend(object:*, exchange:Exchange, routingKey:String):void {
+        _transport.publish(_messageConverter.serialize(object), exchange, routingKey);
     }
 
     public function consume(queue:Queue):void {

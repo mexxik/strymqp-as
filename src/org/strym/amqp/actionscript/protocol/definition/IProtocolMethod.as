@@ -18,6 +18,8 @@ public interface IProtocolMethod extends IReadWritable {
     function get name():String;
     function get qualifiedName():String;
 
+    function get protocolClass():IProtocolClass;
+
     function getField(name:String):*;
     function setField(name:String, value:*):void;
     function get fields():SortedMap;

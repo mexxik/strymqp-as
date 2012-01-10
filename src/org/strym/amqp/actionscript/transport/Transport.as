@@ -76,7 +76,7 @@ public class Transport extends EventDispatcher implements ITransport {
     public function bindQueue(exchange:Exchange, queue:Queue, routingKey:String):void {
     }
 
-    public function publish(data:IDataInput, routingKey:String):void {
+    public function publish(data:IDataInput, exchange:Exchange, routingKey:String):void {
     }
 
     public function consume(queue:Queue):void {

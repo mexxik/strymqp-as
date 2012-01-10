@@ -94,7 +94,7 @@ public class BasicTest {
         _producerConnection.declareQueue(queue);
         _producerConnection.bindQueue(exchange, queue, "routing.key");
 
-        _producerConnection.convertAndSend("Hello, World!", "routing.key");
+        _producerConnection.convertAndSend("Hello, World!", exchange, "routing.key");
 
     }
 
