@@ -10,8 +10,8 @@ import flash.events.IEventDispatcher;
 
 import org.strym.amqp.actionscript.converters.IMessageConverter;
 
-import org.strym.amqp.actionscript.exchange.Exchange;
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Exchange;
+import org.strym.amqp.actionscript.domain.Queue;
 
 public interface IConnection extends IEventDispatcher {
     function get name():String;

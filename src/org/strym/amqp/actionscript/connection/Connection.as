@@ -12,17 +12,20 @@ import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
 import org.strym.amqp.actionscript.converters.IMessageConverter;
+import org.strym.amqp.actionscript.domain.Message;
+import org.strym.amqp.actionscript.events.BasicEvent;
 
 import org.strym.amqp.actionscript.events.ChannelEvent;
 
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.events.ExchangeEvent;
+import org.strym.amqp.actionscript.events.MessageEvent;
 import org.strym.amqp.actionscript.events.QueueEvent;
-import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.domain.Exchange;
 
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Queue;
 import org.strym.amqp.actionscript.transport.ITransport;
 import org.strym.amqp.actionscript.transport.Transport;
 
@@ -73,6 +76,8 @@ public class Connection extends EventDispatcher implements IConnection {
 
             _transport.addEventListener(QueueEvent.QUEUE_CREATED, transport_queueDeclaredHandler);
             _transport.addEventListener(QueueEvent.QUEUE_BOUND, transport_queueBoundHandler);
+
+            _transport.addEventListener(BasicEvent.DELIVERY_COMPLETE, transport_deliveryCompleteHandler);
 
             _transport.connect(_connectionParameters);
         }
@@ -158,6 +163,16 @@ public class Connection extends EventDispatcher implements IConnection {
 
     protected function transport_queueBoundHandler(event:QueueEvent):void {
         dispatchEvent(event);
+    }
+
+    protected function transport_deliveryCompleteHandler(event:BasicEvent):void {
+        var message:Message = new Message();
+        message.body = _messageConverter.deserialize(event.body);
+        
+        var messageEvent:MessageEvent = new MessageEvent(MessageEvent.MESSAGE_RECEIVED);
+        messageEvent.message = message;
+
+        dispatchEvent(messageEvent);
     }
 }
 }

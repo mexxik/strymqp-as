@@ -5,7 +5,7 @@
  * Time: 7:06 PM
  * To change this template use File | Settings | File Templates.
  */
-package org.strym.amqp.actionscript.exchange {
+package org.strym.amqp.actionscript.domain {
 public class Exchange {
     static public const DIRECT:String = "direct";
 

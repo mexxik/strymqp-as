@@ -8,7 +8,7 @@
 package org.strym.amqp.actionscript.events {
 import flash.events.Event;
 
-import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.domain.Exchange;
 
 public class ExchangeEvent extends Event {
     static public const EXCHANGE_DECLARED:String = "exchangedDeclared";

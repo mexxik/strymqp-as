@@ -14,6 +14,9 @@ public class Channel extends EventDispatcher implements IChannel  {
     protected var _id:uint;
     protected var _protocol:IProtocol;
 
+    protected var _currentHeader:IFrame;
+    protected var _currentBody:IFrame;
+
     public function Channel(id:uint, protocol:IProtocol) {
         _id = id;
         _protocol = protocol;

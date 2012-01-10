@@ -10,10 +10,10 @@ import flash.events.IEventDispatcher;
 import flash.utils.IDataInput;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
-import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.domain.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Queue;
 
 public interface ITransport extends IEventDispatcher {
     function connect(connectionParameters:ConnectionParameters):void;

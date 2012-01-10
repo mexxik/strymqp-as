@@ -17,8 +17,8 @@ import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.connection.IConnection;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
-import org.strym.amqp.actionscript.exchange.Exchange;
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Exchange;
+import org.strym.amqp.actionscript.domain.Queue;
 
 public class BasicTest {
     private var _delayTimer:Timer;

@@ -16,18 +16,19 @@ import org.as3commons.collections.SortedMap;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.di.Injector;
+import org.strym.amqp.actionscript.events.BasicEvent;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.events.ExchangeEvent;
 import org.strym.amqp.actionscript.events.QueueEvent;
-import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.domain.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.protocol.definition.IProtocolMethod;
 import org.strym.amqp.actionscript.protocol.v091.definition.DomainReadWriter091;
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Queue;
 import org.strym.amqp.actionscript.transport.IChannel;
 import org.strym.amqp.actionscript.transport.IFrame;
 import org.strym.amqp.actionscript.transport.Transport;
@@ -176,7 +177,7 @@ public class Transport091 extends Transport {
             publishMethod.setField("routing-key", routingKey);
             publishMethod.setField("mandatory", false);
             publishMethod.setField("immediate", false);
-            
+
             publishMethod.write(publishFrame.payload);
 
             flushFrame(publishFrame);
@@ -253,21 +254,25 @@ public class Transport091 extends Transport {
     }
 
     override protected function delegate_dataHandler(event:ProgressEvent):void {
-        if (_delegate.bytesAvailable > 0) {
-            if (!_currentFrame)
-                _currentFrame = new Frame091();
+        while (_delegate.bytesAvailable > 0) {
+            if (_delegate.bytesAvailable > 0) {
+                if (!_currentFrame)
+                    _currentFrame = new Frame091();
 
-            if (!_currentFrame.isComplete) {
-                _currentFrame.read(_delegate);
+                if (!_currentFrame.isComplete) {
+                    _currentFrame.read(_delegate);
+                }
+            }
+
+            if (_currentFrame.isComplete) {
+                var channel:IChannel = getChannel(_currentFrame.channel);
+
+                channel.handleFrame(_currentFrame);
+
+                _currentFrame = null;
             }
         }
 
-        if (_currentFrame.isComplete) {
-            var channel:IChannel = getChannel(_currentFrame.channel);
-            channel.handleFrame(_currentFrame);
-
-            _currentFrame = null;
-        }
     }
 
     private function flushFrame(frame:IFrame):void {
@@ -376,6 +381,10 @@ public class Transport091 extends Transport {
         event.queue = _currentQueue;
 
         super.channel_queueBoundHandler(event);
+    }
+
+    override protected function channel_deliveryCompleteHandler(event:BasicEvent):void {
+        super.channel_deliveryCompleteHandler(event);
     }
 }
 }

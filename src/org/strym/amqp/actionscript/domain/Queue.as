@@ -5,7 +5,7 @@
  * Time: 8:22 PM
  * To change this template use File | Settings | File Templates.
  */
-package org.strym.amqp.actionscript.queue {
+package org.strym.amqp.actionscript.domain {
 public class Queue {
 
     private var _name:String;

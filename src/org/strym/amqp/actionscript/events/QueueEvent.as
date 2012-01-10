@@ -8,9 +8,9 @@
 package org.strym.amqp.actionscript.events {
 import flash.events.Event;
 
-import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.domain.Exchange;
 
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Queue;
 
 public class QueueEvent extends Event {
     static public const QUEUE_CREATED:String = "queueCreated";

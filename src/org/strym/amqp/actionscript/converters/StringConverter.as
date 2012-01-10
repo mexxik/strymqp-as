@@ -28,7 +28,7 @@ public class StringConverter implements IMessageConverter {
     }
 
     public function deserialize(data:IDataInput):* {
-        var result:String = "";
+        var result:String = data.readUTFBytes((data as ByteArray).length);
 
         return result;
     }

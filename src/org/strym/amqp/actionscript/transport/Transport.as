@@ -16,17 +16,18 @@ import org.as3commons.collections.Map;
 
 import org.strym.amqp.actionscript.connection.ConnectionParameters;
 import org.strym.amqp.actionscript.di.Injector;
+import org.strym.amqp.actionscript.events.BasicEvent;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.events.ExchangeEvent;
 import org.strym.amqp.actionscript.events.QueueEvent;
-import org.strym.amqp.actionscript.exchange.Exchange;
+import org.strym.amqp.actionscript.domain.Exchange;
 import org.strym.amqp.actionscript.io.IODelegate;
 import org.strym.amqp.actionscript.io.SocketDelegate;
 import org.strym.amqp.actionscript.protocol.IProtocol;
 import org.strym.amqp.actionscript.protocol.Protocol;
 import org.strym.amqp.actionscript.protocol.definition.IDomainReaderWriter;
-import org.strym.amqp.actionscript.queue.Queue;
+import org.strym.amqp.actionscript.domain.Queue;
 import org.strym.amqp.actionscript.transport.v091.Transport091;
 
 public class Transport extends EventDispatcher implements ITransport {
@@ -102,6 +103,8 @@ public class Transport extends EventDispatcher implements ITransport {
 
         channel.addEventListener(QueueEvent.QUEUE_CREATED, channel_queueDeclaredHandler);
         channel.addEventListener(QueueEvent.QUEUE_BOUND, channel_queueBoundHandler);
+
+        channel.addEventListener(BasicEvent.DELIVERY_COMPLETE, channel_deliveryCompleteHandler);
     }
 
     protected function getChannel(id:int):IChannel {
@@ -154,6 +157,10 @@ public class Transport extends EventDispatcher implements ITransport {
     }
 
     protected function channel_queueBoundHandler(event:QueueEvent):void {
+        dispatchEvent(event);
+    }
+
+    protected function channel_deliveryCompleteHandler(event:BasicEvent):void {
         dispatchEvent(event);
     }
 

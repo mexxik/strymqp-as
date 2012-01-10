@@ -6,7 +6,11 @@
  * To change this template use File | Settings | File Templates.
  */
 package org.strym.amqp.actionscript.transport.v091 {
+import flash.utils.ByteArray;
+import flash.utils.IDataInput;
+
 import org.as3commons.collections.SortedMap;
+import org.strym.amqp.actionscript.events.BasicEvent;
 import org.strym.amqp.actionscript.events.ChannelEvent;
 import org.strym.amqp.actionscript.events.ConnectionEvent;
 import org.strym.amqp.actionscript.events.ExchangeEvent;
@@ -18,6 +22,7 @@ import org.strym.amqp.actionscript.transport.IFrame;
 import org.strym.amqp.actionscript.transport.TuneProperties;
 
 public class Channel091 extends Channel {
+
     public function Channel091(id:uint, protocol:IProtocol) {
         super(id, protocol);
     }
@@ -35,6 +40,22 @@ public class Channel091 extends Channel {
                 handlerMethod(protocolMethod);
 
                 break;
+
+            case 2:
+                _currentHeader = frame;
+                break;
+
+            case 3:
+                _currentBody = frame;
+
+                var bodyPayload:ByteArray = frame.payload;
+
+                var basicEvent:BasicEvent = new BasicEvent(BasicEvent.DELIVERY_COMPLETE);
+                basicEvent.body = bodyPayload;
+
+                dispatchEvent(basicEvent);
+
+                break;
         }
     }
 
@@ -43,6 +64,7 @@ public class Channel091 extends Channel {
         var channelEvent:ChannelEvent;
         var exchangeEvent:ExchangeEvent;
         var queueEvent:QueueEvent;
+        var basicEvent:BasicEvent;
 
         switch (method.qualifiedName) {
             // connection class
@@ -89,6 +111,12 @@ public class Channel091 extends Channel {
                 queueEvent = new QueueEvent(QueueEvent.QUEUE_BOUND);
 
                 break;
+
+            // basic class
+            case "basic.deliver":
+                basicEvent = new BasicEvent(BasicEvent.DELIVERY_STARTED);
+                break;
+
         }
 
         if (connectionEvent)
@@ -105,6 +133,9 @@ public class Channel091 extends Channel {
 
         if (queueEvent)
             dispatchEvent(queueEvent);
+
+        if (basicEvent)
+            dispatchEvent(basicEvent);
 
     }
 
