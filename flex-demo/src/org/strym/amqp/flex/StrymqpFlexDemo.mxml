@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+               xmlns:s="library://ns.adobe.com/flex/spark"
+               xmlns:client="org.strym.amqp.flex.client.*">
+    <fx:Script><![CDATA[
+        private function simpleSendButton_clickHandler(event:MouseEvent):void {
+            producer.send(simpleTextInput.text);
+        }
+        ]]></fx:Script>
+
+    <fx:Declarations>
+        <client:AmqpProducer id="producer"
+                             host="localhost"
+                             exchange="strym.flex.echange" queue="strym.flex.queue"
+                             routingKey="strym.flex.routing.key"/>
+
+        <client:AmqpConsumer id="consumer"
+                             host="localhost"
+                             queue="strym.flex.queue"
+                             routingKey="strym.flex.routing.key"
+                             autoConsume="true"/>
+    </fx:Declarations>
+
+    <s:Panel title="simple string send">
+        <s:layout>
+            <s:HorizontalLayout/>
+        </s:layout>
+
+        <s:VGroup>
+            <s:TextInput id="simpleTextInput"/>
+
+            <s:Button id="simpleSendButton" label="send"
+                      enabled="{simpleTextInput.text != ''}"
+                      click="simpleSendButton_clickHandler(event)"/>
+        </s:VGroup>
+
+        <s:Label text="Received string: {consumer.lastResult}"/>
+    </s:Panel>
+</s:Application>
