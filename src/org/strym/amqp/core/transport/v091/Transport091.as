@@ -173,7 +173,7 @@ public class Transport091 extends Transport {
 
             var publishMethod:IProtocolMethod = _connectionParameters.protocol.findMethod("basic", "publish");
             publishMethod.setField("reserved-1", 0);
-            publishMethod.setField("exchange", exchange.name);
+            publishMethod.setField("exchange", exchange ? exchange.name : "");
             publishMethod.setField("routing-key", routingKey);
             publishMethod.setField("mandatory", false);
             publishMethod.setField("immediate", false);

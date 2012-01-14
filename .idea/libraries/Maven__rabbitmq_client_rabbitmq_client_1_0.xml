@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Maven: rabbitmq-client:rabbitmq-client:1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/rabbitmq-tutorials/libs/rabbitmq-client.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

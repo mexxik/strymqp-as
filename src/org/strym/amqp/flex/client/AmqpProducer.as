@@ -29,9 +29,9 @@ public class AmqpProducer extends AmqpClient {
     public function send(message:*, exchange:String = null, routingKey:String = null):void {
         var destExchange:Exchange = exchange ? new Exchange(exchange) : _exchangeObject;
 
-        if (!destExchange) {
-            throw Error("Neither exchange name specified in the send() method nor exchange defined in the Producer");
-        }
+        //if (!destExchange) {
+        //    throw Error("Neither exchange name specified in the send() method nor exchange defined in the Producer");
+        //}
 
         _connection.convertAndSend(message, destExchange, routingKey ? routingKey : _routingKey);
     }
