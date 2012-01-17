@@ -11,12 +11,12 @@ import org.strym.amqp.core.domain.Queue;
 import org.strym.amqp.core.events.ChannelEvent;
 
 public class AmqpProducer extends AmqpClient {
-    protected var _exchangeObject:Exchange;
-    protected var _queueObject:Queue;
+    protected var _exchange:Exchange;
+    protected var _queue:Queue;
 
     // component properties
-    protected var _exchange:String;
-    protected var _queue:String;
+    protected var _exchangeName:String;
+    protected var _queueName:String;
     protected var _routingKey:String = "";
 
     public function AmqpProducer() {
@@ -27,13 +27,18 @@ public class AmqpProducer extends AmqpClient {
     // public methods
     // ------------------------------------------------------------
     public function send(message:*, exchange:String = null, routingKey:String = null):void {
-        var destExchange:Exchange = exchange ? new Exchange(exchange) : _exchangeObject;
+        var destExchange:Exchange = exchange ? new Exchange(exchange) : _exchange;
 
         //if (!destExchange) {
         //    throw Error("Neither exchange name specified in the send() method nor exchange defined in the Producer");
         //}
 
-        _connection.convertAndSend(message, destExchange, routingKey ? routingKey : _routingKey);
+        if (_connected) {
+            _connection.convertAndSend(message, destExchange, routingKey ? routingKey : _routingKey);
+        }
+        else {
+            throw Error("Unable to send a message - Amqp connection is not opened");
+        }
     }
 
     // ------------------------------------------------------------
@@ -42,40 +47,40 @@ public class AmqpProducer extends AmqpClient {
     override protected function onChannelOpened(event:ChannelEvent):void {
         super.onChannelOpened(event);
 
-        if (_exchange && _exchange != "") {
-            _exchangeObject = new Exchange(_exchange);
+        if (_exchangeName && _exchangeName != "") {
+            _exchange = new Exchange(_exchangeName);
 
-            _connection.declareExchange(_exchangeObject);
+            _connection.declareExchange(_exchange);
         }
 
-        if (_queue && _queue != "") {
-            _queueObject = new Queue(_queue);
+        if (_queueName && _queueName != "") {
+            _queue = new Queue(_queueName);
 
-            _connection.declareQueue(_queueObject);
+            _connection.declareQueue(_queue);
         }
 
-        if (_exchange && _queue) {
-            _connection.bindQueue(_exchangeObject, _queueObject, _routingKey);
+        if (_exchangeName && _queueName) {
+            _connection.bindQueue(_exchange, _queue, _routingKey);
         }
     }
 
     // ------------------------------------------------------------
     // getters/setters
     // ------------------------------------------------------------
-    public function get exchange():String {
-        return _exchange;
+    public function get exchangeName():String {
+        return _exchangeName;
     }
 
-    public function set exchange(value:String):void {
-        _exchange = value;
+    public function set exchangeName(value:String):void {
+        _exchangeName = value;
     }
 
-    public function get queue():String {
-        return _queue;
+    public function get queueName():String {
+        return _queueName;
     }
 
-    public function set queue(value:String):void {
-        _queue = value;
+    public function set queueName(value:String):void {
+        _queueName = value;
     }
 
     public function get routingKey():String {

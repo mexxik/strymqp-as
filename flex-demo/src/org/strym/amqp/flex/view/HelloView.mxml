@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+                      xmlns:s="library://ns.adobe.com/flex/spark"
+                      xmlns:mx="library://ns.adobe.com/flex/mx"
+                      xmlns:client="org.strym.amqp.flex.client.*"
+                      xmlns:components="org.strym.amqp.flex.view.components.*">
+
+    <!--<fx:Script><![CDATA[
+        private function simpleSendButton_clickHandler(event:MouseEvent):void {
+            producer.send(simpleTextInput.text, null, queueName);
+        }
+        ]]></fx:Script>
+
+    <fx:Declarations>
+        <fx:String id="queueName">hello.queue</fx:String>
+
+        <client:AmqpProducer id="producer"
+                             host="localhost"
+                             queueName="{queueName}" />
+
+        <client:AmqpConsumer id="consumer"
+                             host="localhost"
+                             queueName="{queueName}"
+                             autoConsume="true" />
+    </fx:Declarations>
+
+    <s:layout>
+        <s:VerticalLayout horizontalAlign="center" />
+    </s:layout>
+
+    <s:Group width="200" height="100">
+        <s:Rect width="100%" height="100%">
+
+        </s:Rect>
+    </s:Group>
+
+    <s:VGroup>
+        <s:TextInput id="simpleTextInput"/>
+
+        <s:Button id="simpleSendButton" label="send"
+                  enabled="{simpleTextInput.text != ''}"
+                  click="simpleSendButton_clickHandler(event)"/>
+    </s:VGroup>
+
+    <s:Label text="Received string: {consumer.lastResult}"/>-->
+
+    <s:layout>
+        <s:VerticalLayout/>
+    </s:layout>
+
+    <s:TextArea width="100%">
+        <s:textFlow>
+            <s:TextFlow>
+                <s:p>
+                    <s:span color="#ff6700" fontSize="14" fontWeight="bold">
+                        "Hello, World!"
+                    </s:span>
+                </s:p>
+
+                <s:p>
+                    A simple example of basic produce-consume mechanics with
+                    a single queue.
+                </s:p>
+
+                <s:p>
+                    We are defining a queue name both on the consumer and
+                    the producer components, so that the queue is created
+                    no matter who will be created first.
+                </s:p>
+
+                <s:p>
+                    The consumer subscribes to the messages via queue name.
+                </s:p>
+
+                <s:p>
+                    The producer sends messages with a routing key. Which is
+                    in our case is a queue name.
+                </s:p>
+            </s:TextFlow>
+        </s:textFlow>
+    </s:TextArea>
+
+
+    <s:HGroup>
+        <components:ProducerComponent id="producerComponent"
+                                      queueName="hello.queue" routingKeyName="hello.queue"/>
+
+        <components:ConsumerComponent id="consumerComponent"
+                                      queueName="hello.queue"/>
+    </s:HGroup>
+
+
+</s:SkinnableContainer>

@@ -16,7 +16,9 @@ import org.strym.amqp.core.connection.ConnectionParameters;
 import org.strym.amqp.core.connection.IConnection;
 import org.strym.amqp.core.connection.IConnectionFactory;
 import org.strym.amqp.core.events.ChannelEvent;
+import org.strym.amqp.core.events.ConnectionEvent;
 
+[Event(name="simpleConnectionCreated", type="org.strym.amqp.core.events.ConnectionEvent")]
 public class AmqpClient extends EventDispatcher implements IMXMLObject {
     // defaults:
 
@@ -26,10 +28,11 @@ public class AmqpClient extends EventDispatcher implements IMXMLObject {
     protected var _connectionFactory:IConnectionFactory;
 
     // component properties
-    private var _host:String;
+    protected var _autoConnect:Boolean = false;
+    protected var _host:String;
 
     // component state
-    private var _connected:Boolean;
+    protected var _connected:Boolean;
 
     public function AmqpClient() {
         super();
@@ -45,7 +48,18 @@ public class AmqpClient extends EventDispatcher implements IMXMLObject {
 
         _connection.addEventListener(ChannelEvent.CHANNEL_OPENED, onChannelOpened);
 
-        _connection.connect();
+        if (_autoConnect) {
+            _connection.connect();
+        }
+    }
+
+    // ------------------------------------------------------------
+    // public methods
+    // ------------------------------------------------------------a
+    public function connect():void {
+        if (_connection && !_connected) {
+            _connection.connect();
+        }
     }
 
     // ------------------------------------------------------------
@@ -53,11 +67,23 @@ public class AmqpClient extends EventDispatcher implements IMXMLObject {
     // ------------------------------------------------------------
     protected function onChannelOpened(event:ChannelEvent):void {
         connected = true;
+
+        dispatchEvent(new ConnectionEvent(ConnectionEvent.SIMPLE_CONNECTION_CREATED));
     }
 
     // ------------------------------------------------------------
     // getters/setters
     // ------------------------------------------------------------
+    [Inspectable(defaultValue="true")]
+    [Bindable(event="propertyChange")]
+    public function get autoConnect():Boolean {
+        return _autoConnect;
+    }
+
+    public function set autoConnect(value:Boolean):void {
+        _autoConnect = value;
+    }
+
     [Bindable(event="propertyChange")]
     public function get host():String {
         return _host;
@@ -67,7 +93,7 @@ public class AmqpClient extends EventDispatcher implements IMXMLObject {
         _host = value;
     }
 
-    [Bindable(event="propertyChange")]
+    [Bindable]
     public function get connected():Boolean {
         return _connected;
     }

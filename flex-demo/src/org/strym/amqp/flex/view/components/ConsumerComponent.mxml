@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+                      xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:client="org.strym.amqp.flex.client.*">
+
+    <fx:Script><![CDATA[
+        import org.strym.amqp.core.events.ConnectionEvent;
+
+        private function connectButton_clickHandler(event:MouseEvent):void {
+            consumer.connect();
+        }
+
+        private function producer_simpleConnectionCreatedHandler(event:ConnectionEvent):void {
+            var statePrefix:String = "string";
+
+            currentState = statePrefix + "AndConnected";
+        }
+
+        private function sendButton_clickHandler(event:MouseEvent):void {
+        }
+        ]]></fx:Script>
+
+    <fx:Declarations>
+        <fx:String id="exchangeName"></fx:String>
+        <fx:String id="queueName"></fx:String>
+        <fx:String id="routingKeyName"></fx:String>
+
+        <client:AmqpConsumer id="consumer"
+                             host="localhost"
+                             autoConnect="false"
+                             queueName="{queueName}"
+                             routingKey="{routingKeyName}"
+                             autoConsume="true"
+                             simpleConnectionCreated="producer_simpleConnectionCreatedHandler(event)"/>
+    </fx:Declarations>
+
+    <s:states>
+        <s:State name="stringAndDisconnected" stateGroups="disconnected"/>
+        <s:State name="stringAndConnected" stateGroups="connected"/>
+    </s:states>
+
+    <s:Group width="100%" height="100%">
+        <s:Rect width="100%" height="100%"
+                radiusX="8" radiusY="8">
+
+            <s:stroke>
+                <s:SolidColorStroke color="#000080" weight="2"/>
+            </s:stroke>
+
+            <s:fill>
+                <s:LinearGradient rotation="90">
+                    <s:GradientEntry color="#00a2db" ratio="0.0"/>
+                    <s:GradientEntry color="#0084c7" ratio="1.0"/>
+                </s:LinearGradient>
+            </s:fill>
+        </s:Rect>
+
+        <s:VGroup width="100%" height="100%"
+                  horizontalAlign="left"
+                  paddingLeft="5" paddingTop="5">
+
+            <s:HGroup width="100%" verticalAlign="middle">
+                <s:Label text="Consumer"
+                         fontWeight="bold"/>
+
+                <s:Button id="connectButton" label="connect"
+                          enabled="{!consumer.autoConnect &amp;&amp; !consumer.connected}"
+                          click="connectButton_clickHandler(event)"/>
+
+                <s:Group width="80" height="16">
+                    <s:Rect width="100%" height="100%"
+                            radiusX="2" radiusY="2"
+                            y="-2">
+                        <s:fill>
+                            <s:LinearGradient rotation="90">
+                                <s:GradientEntry ratio="0.0"
+                                                 color.disconnected="#ff8080"
+                                                 color.connected="#80ff80"/>
+
+                                <s:GradientEntry ratio="1.0"
+                                                 color.disconnected="#dd8080"
+                                                 color.connected="#80dd80"/>
+                            </s:LinearGradient>
+                        </s:fill>
+                    </s:Rect>
+
+                    <s:Label text.connected="connected"
+                             text.disconnected="disconnected"
+                             horizontalCenter="0"/>
+                </s:Group>
+            </s:HGroup>
+
+            <s:Form width="100%" height="100%">
+                <s:layout>
+                    <s:FormLayout gap="-15" paddingTop="-15"/>
+                </s:layout>
+
+                <s:FormItem label="queue">
+                    <s:TextInput id="queueInput" text="@{queueName}"/>
+                </s:FormItem>
+
+                <s:FormItem label="routing key">
+                    <s:TextInput id="routingInput" text="@{routingKeyName}"/>
+                </s:FormItem>
+
+                <s:FormItem label="received message:">
+                    <s:Label text="{consumer.lastResult}"/>
+                </s:FormItem>
+
+            </s:Form>
+
+        </s:VGroup>
+    </s:Group>
+</s:SkinnableContainer>

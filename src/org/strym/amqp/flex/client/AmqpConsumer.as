@@ -15,10 +15,10 @@ import org.strym.amqp.core.events.MessageEvent;
 public class AmqpConsumer extends AmqpClient {
     static public const BINDING_RESULT:String = "bindingResult";
 
-    protected var _queueObject:Queue;
+    protected var _queue:Queue;
 
     // component properties
-    protected var _queue:String;
+    protected var _queueName:String;
     protected var _routingKey:String;
 
     protected var _autoConsume:Boolean;
@@ -51,14 +51,14 @@ public class AmqpConsumer extends AmqpClient {
     override protected function onChannelOpened(event:ChannelEvent):void {
         super.onChannelOpened(event);
 
-        if (_queue && _queue != "") {
-            _queueObject = new Queue(_queue);
+        if (_queueName && _queueName != "") {
+            _queue = new Queue(_queueName);
 
-            _connection.declareQueue(_queueObject);
+            _connection.declareQueue(_queue);
         }
 
         if (_autoConsume) {
-            _connection.consume(_queueObject);
+            _connection.consume(_queue);
         }
     }
 
@@ -69,20 +69,20 @@ public class AmqpConsumer extends AmqpClient {
     // ------------------------------------------------------------
     // getters/setters
     // ------------------------------------------------------------
-    public function get queueObject():Queue {
-        return _queueObject;
-    }
-
-    public function set queueObject(value:Queue):void {
-        _queueObject = value;
-    }
-
-    public function get queue():String {
+    public function get queue():Queue {
         return _queue;
     }
 
-    public function set queue(value:String):void {
+    public function set queue(value:Queue):void {
         _queue = value;
+    }
+
+    public function get queueName():String {
+        return _queueName;
+    }
+
+    public function set queueName(value:String):void {
+        _queueName = value;
     }
 
     public function get routingKey():String {
