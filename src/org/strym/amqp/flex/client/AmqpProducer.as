@@ -15,6 +15,8 @@ public class AmqpProducer extends AmqpClient {
     protected var _queue:Queue;
 
     // component properties
+    private var _autoBind:Boolean = false;
+
     protected var _exchangeName:String;
     protected var _queueName:String;
     protected var _routingKey:String = "";
@@ -59,7 +61,7 @@ public class AmqpProducer extends AmqpClient {
             _connection.declareQueue(_queue);
         }
 
-        if (_exchangeName && _queueName) {
+        if (_autoBind && _exchangeName && _queueName) {
             _connection.bindQueue(_exchange, _queue, _routingKey);
         }
     }
@@ -67,6 +69,15 @@ public class AmqpProducer extends AmqpClient {
     // ------------------------------------------------------------
     // getters/setters
     // ------------------------------------------------------------
+    [Inspectable(defaultValue="true")]
+    public function get autoBind():Boolean {
+        return _autoBind;
+    }
+
+    public function set autoBind(value:Boolean):void {
+        _autoBind = value;
+    }
+
     public function get exchangeName():String {
         return _exchangeName;
     }

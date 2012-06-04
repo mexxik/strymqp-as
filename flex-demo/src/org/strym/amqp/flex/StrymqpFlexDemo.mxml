@@ -18,5 +18,13 @@
             <view:HelloView id="helloView" width="100%" height="100%"/>
         </s:NavigatorContent>
 
+        <s:NavigatorContent id="work" label="Work Queue">
+            <view:WorkView id="workView" width="100%" height="100%"/>
+        </s:NavigatorContent>
+
+        <s:NavigatorContent id="subscribe" label="Publish/Subscribe">
+            <view:SubscribeView id="subscribeView" width="100%" height="100%"/>
+        </s:NavigatorContent>
+
     </mx:ViewStack>
 </s:Application>

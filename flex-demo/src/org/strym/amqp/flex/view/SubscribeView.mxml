@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+                      xmlns:mx="library://ns.adobe.com/flex/mx"
+                      xmlns:components="org.strym.amqp.flex.view.components.*">
+
+    <s:layout>
+        <s:VerticalLayout/>
+    </s:layout>
+
+    <s:TextArea width="100%">
+        <s:textFlow>
+            <s:TextFlow>
+                <s:p>
+                    <s:span color="#ff6700" fontSize="14" fontWeight="bold">
+                        "Publish/Subscribe"
+                    </s:span>
+                </s:p>
+
+                <s:p>
+                    A simple example of basic produce-consume mechanics with
+                    a single queue.
+                </s:p>
+
+                <s:p>
+                    We are defining a queue name both on the consumer and
+                    the producer components, so that the queue is created
+                    no matter who will be created first.
+                </s:p>
+
+                <s:p>
+                    The consumer subscribes to the messages via queue name.
+                </s:p>
+
+                <s:p>
+                    The producer sends messages with a routing key. Which is
+                    in our case is a queue name.
+                </s:p>
+            </s:TextFlow>
+        </s:textFlow>
+    </s:TextArea>
+
+
+    <s:HGroup>
+        <components:ProducerComponent id="producerComponent"
+                                      autoBind="true"
+                                      exchangeName="subscribe.exchange"
+                                      queueName="subscribe.queue"
+                                      routingKeyName="subscribe.routing.key"/>
+
+        <s:VGroup>
+            <components:ConsumerComponent id="consumerComponent1"
+                                          queueName="subscribe.queue"/>
+            <components:ConsumerComponent id="consumerComponent2"
+                                          queueName="subscribe.queue"/>
+        </s:VGroup>
+
+    </s:HGroup>
+</s:SkinnableContainer>

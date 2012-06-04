@@ -31,6 +31,8 @@ public class AmqpClient extends EventDispatcher implements IMXMLObject {
     protected var _autoConnect:Boolean = false;
     protected var _host:String;
 
+    private var _exchanges:Array = [];
+
     // component state
     protected var _connected:Boolean;
 
@@ -100,6 +102,16 @@ public class AmqpClient extends EventDispatcher implements IMXMLObject {
 
     public function set connected(value:Boolean):void {
         _connected = value;
+    }
+
+    [Bindable("propertyChange")]
+    [Inspectable(category="General", arrayType="org.strym.amqp.flex.client.AmqpExchange")]
+    public function get exchanges():Array {
+        return _exchanges;
+    }
+
+    public function set exchanges(value:Array):void {
+        _exchanges = value;
     }
 }
 }

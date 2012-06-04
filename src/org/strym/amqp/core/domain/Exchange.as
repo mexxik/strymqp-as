@@ -8,6 +8,7 @@
 package org.strym.amqp.core.domain {
 public class Exchange {
     static public const DIRECT:String = "direct";
+    static public const FANOUT:String = "fanout";
 
     protected var _name:String;
     protected var _type:String;

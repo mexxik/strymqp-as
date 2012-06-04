@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Maven: swiftmq-client:swiftmq-client:1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/rabbitmq-tutorials/libs/amqp.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

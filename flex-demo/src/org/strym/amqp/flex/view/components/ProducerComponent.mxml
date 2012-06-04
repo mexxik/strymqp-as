@@ -24,6 +24,8 @@
         ]]></fx:Script>
 
     <fx:Declarations>
+        <fx:Boolean id="autoBind">false</fx:Boolean>
+
         <fx:String id="exchangeName"></fx:String>
         <fx:String id="queueName"></fx:String>
         <fx:String id="routingKeyName"></fx:String>
@@ -31,6 +33,7 @@
         <client:AmqpProducer id="producer"
                              host="localhost"
                              autoConnect="false"
+                             autoBind="{autoBind}"
                              exchangeName="{exchangeName}"
                              queueName="{queueName}"
                              routingKey="{routingKeyName}"

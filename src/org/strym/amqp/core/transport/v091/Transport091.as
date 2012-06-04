@@ -235,6 +235,10 @@ public class Transport091 extends Transport {
 
     override protected function sendHeader():void {
         _delegate.writeUTFBytes("AMQP");
+        /*_delegate.writeByte(1);
+         _delegate.writeByte(0);
+         _delegate.writeByte(0);
+         _delegate.writeByte(0);*/
         _delegate.writeByte(_connectionParameters.protocol.id);
         _delegate.writeByte(_connectionParameters.protocol.major);
         _delegate.writeByte(_connectionParameters.protocol.minor);

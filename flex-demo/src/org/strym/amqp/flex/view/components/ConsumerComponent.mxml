@@ -4,6 +4,7 @@
 
     <fx:Script><![CDATA[
         import org.strym.amqp.core.events.ConnectionEvent;
+        import org.strym.amqp.core.events.MessageEvent;
 
         private function connectButton_clickHandler(event:MouseEvent):void {
             consumer.connect();
@@ -16,6 +17,9 @@
         }
 
         private function sendButton_clickHandler(event:MouseEvent):void {
+        }
+
+        private function consumer_messageReceivedHandler(event:MessageEvent):void {
         }
         ]]></fx:Script>
 
@@ -30,7 +34,9 @@
                              queueName="{queueName}"
                              routingKey="{routingKeyName}"
                              autoConsume="true"
-                             simpleConnectionCreated="producer_simpleConnectionCreatedHandler(event)"/>
+                             simpleConnectionCreated="producer_simpleConnectionCreatedHandler(event)"
+                             messageReceived="consumer_messageReceivedHandler(event)"/>
+
     </fx:Declarations>
 
     <s:states>
@@ -103,7 +109,7 @@
                 </s:FormItem>
 
                 <s:FormItem label="received message:">
-                    <s:Label text="{consumer.lastResult}"/>
+                    <s:Label text="{consumer.lastResult}" backgroundColor="#808080"/>
                 </s:FormItem>
 
             </s:Form>

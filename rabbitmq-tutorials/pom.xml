@@ -28,6 +28,22 @@
             <scope>system</scope>
             <systemPath>${basedir}/libs/rabbitmq-client.jar</systemPath>
         </dependency>
+
+        <dependency>
+            <groupId>swiftmq-client</groupId>
+            <artifactId>swiftmq-client</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/amqp.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>swiftmq-core</groupId>
+            <artifactId>swiftmq-core</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/swiftmq.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>

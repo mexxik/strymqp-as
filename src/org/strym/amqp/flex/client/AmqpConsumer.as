@@ -12,6 +12,7 @@ import org.strym.amqp.core.domain.Queue;
 import org.strym.amqp.core.events.ChannelEvent;
 import org.strym.amqp.core.events.MessageEvent;
 
+[Event(name="messageReceived", type="org.strym.amqp.core.events.MessageEvent")]
 public class AmqpConsumer extends AmqpClient {
     static public const BINDING_RESULT:String = "bindingResult";
 
@@ -64,6 +65,8 @@ public class AmqpConsumer extends AmqpClient {
 
     protected function onMessageReceived(event:MessageEvent):void {
         setResult(event.message.body);
+
+        dispatchEvent(event);
     }
 
     // ------------------------------------------------------------
