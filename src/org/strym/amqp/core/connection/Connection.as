@@ -18,6 +18,7 @@ import org.strym.amqp.core.events.BasicEvent;
 import org.strym.amqp.core.events.ChannelEvent;
 
 import org.strym.amqp.core.events.ConnectionEvent;
+import org.strym.amqp.core.events.ErrorEvent;
 import org.strym.amqp.core.events.ExchangeEvent;
 import org.strym.amqp.core.events.MessageEvent;
 import org.strym.amqp.core.events.QueueEvent;
@@ -69,6 +70,7 @@ public class Connection extends EventDispatcher implements IConnection {
             _transport.addEventListener(ConnectionEvent.CONNECTION_STARTED, transport_connectionStartedHandler);
             _transport.addEventListener(ConnectionEvent.CONNECTION_TUNED, transport_connectionTunedHandler);
             _transport.addEventListener(ConnectionEvent.CONNECTION_OPENED, transport_connectionOpenedHandler);
+            _transport.addEventListener(ConnectionEvent.CONNECTION_CLOSED, transport_connectionClosedHandler);
 
             _transport.addEventListener(ChannelEvent.CHANNEL_OPENED, transport_channelOpenedHandler);
 
@@ -78,6 +80,8 @@ public class Connection extends EventDispatcher implements IConnection {
             _transport.addEventListener(QueueEvent.QUEUE_BOUND, transport_queueBoundHandler);
 
             _transport.addEventListener(BasicEvent.DELIVERY_COMPLETE, transport_deliveryCompleteHandler);
+
+            _transport.addEventListener(ErrorEvent.ERROR, transport_errorHandler);
 
             _transport.connect(_connectionParameters);
         }
@@ -147,6 +151,12 @@ public class Connection extends EventDispatcher implements IConnection {
         dispatchEvent(event);
     }
 
+    protected function transport_connectionClosedHandler(event:ConnectionEvent):void {
+        _opened = false;
+
+        dispatchEvent(event);
+    }
+
     protected function transport_channelOpenedHandler(event:ChannelEvent):void {
         event.connection = this;
 
@@ -173,6 +183,10 @@ public class Connection extends EventDispatcher implements IConnection {
         messageEvent.message = message;
 
         dispatchEvent(messageEvent);
+    }
+
+    protected function transport_errorHandler(event:ErrorEvent):void {
+        dispatchEvent(event);
     }
 }
 }

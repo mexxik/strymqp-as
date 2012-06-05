@@ -16,6 +16,7 @@ public class ConnectionEvent extends Event {
     static public const CONNECTION_TUNED:String = "connectionTuned";
     static public const CONNECTION_OPENED:String = "connectionOpened";
     static public const SIMPLE_CONNECTION_CREATED:String = "simpleConnectionCreated";
+    static public const CONNECTION_CLOSED:String = "connectionClosed";
 
     private var _connection:IConnection;
 

@@ -10,6 +10,7 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
+import flash.events.SecurityErrorEvent;
 import flash.utils.IDataInput;
 
 import org.as3commons.collections.Map;
@@ -19,6 +20,7 @@ import org.strym.amqp.core.di.Injector;
 import org.strym.amqp.core.events.BasicEvent;
 import org.strym.amqp.core.events.ChannelEvent;
 import org.strym.amqp.core.events.ConnectionEvent;
+import org.strym.amqp.core.events.ErrorEvent;
 import org.strym.amqp.core.events.ExchangeEvent;
 import org.strym.amqp.core.events.QueueEvent;
 import org.strym.amqp.core.domain.Exchange;
@@ -59,6 +61,7 @@ public class Transport extends EventDispatcher implements ITransport {
 
         _delegate.addEventListener(Event.CONNECT, delegate_connectHandler);
         _delegate.addEventListener(Event.CLOSE, delegate_closeHandler);
+        _delegate.addEventListener(SecurityErrorEvent.SECURITY_ERROR, delegate_securityErrorHandler);
         _delegate.addEventListener(IOErrorEvent.IO_ERROR, delegate_errorHandler);
         _delegate.addEventListener(ProgressEvent.SOCKET_DATA, delegate_dataHandler);
 
@@ -119,11 +122,23 @@ public class Transport extends EventDispatcher implements ITransport {
     }
 
     protected function delegate_closeHandler(event:Event):void {
+        dispatchEvent(new ConnectionEvent(ConnectionEvent.CONNECTION_CLOSED));
+    }
 
+    protected function delegate_securityErrorHandler(event:SecurityErrorEvent):void {
+        var errorEvent:ErrorEvent = new ErrorEvent(ErrorEvent.ERROR);
+        errorEvent.errorMessage = "Security Error";
+        errorEvent.errorDescription = event.text;
+
+        dispatchEvent(errorEvent);
     }
 
     protected function delegate_errorHandler(event:IOErrorEvent):void {
+        var errorEvent:ErrorEvent = new ErrorEvent(ErrorEvent.ERROR);
+        errorEvent.errorMessage = "IO Error";
+        errorEvent.errorDescription = event.text;
 
+        dispatchEvent(errorEvent);
     }
 
     protected function delegate_dataHandler(event:ProgressEvent):void {

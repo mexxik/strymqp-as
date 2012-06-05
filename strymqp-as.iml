@@ -15,7 +15,7 @@
           <sdk name="flex_sdk_4_6" />
         </dependencies>
         <compiler-options>
-          <option name="additionalOptions" value="-debug=true" />
+          <option name="additionalOptions" value="-debug=false" />
         </compiler-options>
         <packaging-air-desktop />
         <packaging-android />
