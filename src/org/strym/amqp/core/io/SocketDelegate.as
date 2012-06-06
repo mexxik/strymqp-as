@@ -23,6 +23,10 @@ public class SocketDelegate extends Socket implements IODelegate {
         return super.connected;
     }
 
+    override public function close():void {
+        super.close();
+    }
+
     override public function flush():void {
         super.flush();
     }

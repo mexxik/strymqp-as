@@ -90,6 +90,11 @@ public class Connection extends EventDispatcher implements IConnection {
         }
     }
 
+    public function close():void {
+        if (_transport)
+            _transport.close();
+    }
+
     public function declareExchange(exchange:Exchange):void {
         _transport.declareExchange(exchange);
     }

@@ -24,6 +24,8 @@ public interface IConnection extends IEventDispatcher {
 
     function connect():void;
 
+    function close():void;
+
     function declareExchange(exchange:Exchange):void;
 
     function declareQueue(queue:Queue):void;

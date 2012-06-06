@@ -17,6 +17,8 @@ public interface IODelegate extends IEventDispatcher, IDataInput, IDataOutput {
 
     function get connected():Boolean;
 
+    function close():void;
+
     function flush():void;
 }
 }

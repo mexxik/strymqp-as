@@ -71,6 +71,10 @@ public class Transport extends EventDispatcher implements ITransport {
     public function open(host:String):void {
     }
 
+    public function close():void {
+        _delegate.close();
+    }
+
     public function declareExchange(exchange:Exchange):void {
     }
 

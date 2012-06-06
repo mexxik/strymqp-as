@@ -20,6 +20,8 @@ public interface ITransport extends IEventDispatcher {
 
     function open(host:String):void;
 
+    function close():void;
+
     function declareExchange(exchange:Exchange):void;
 
     function declareQueue(queue:Queue):void;
